@@ -172,14 +172,14 @@ function filter($data) {
 
 function EncodeURL($url)
 {
-$new = strtolower(ereg_replace(' ','_',$url));
-return($new);
+	$new = strtolower(ereg_replace(' ','_',$url));
+	return($new);
 }
 
 function DecodeURL($url)
 {
-$new = ucwords(ereg_replace('_',' ',$url));
-return($new);
+	$new = ucwords(ereg_replace('_',' ',$url));
+	return($new);
 }
 
 function ChopStr($str, $len) 
@@ -278,16 +278,16 @@ function GenKey($length = 7)
 
 function logout()
 {
-global $db;
-session_start();
+	global $db;
+	session_start();
 
-$sess_user_id = strip_tags(mysql_real_escape_string($_SESSION['user_id']));
-$cook_user_id = strip_tags(mysql_real_escape_string($_COOKIE['user_id']));
+	$sess_user_id = strip_tags(mysql_real_escape_string($_SESSION['user_id']));
+	$cook_user_id = strip_tags(mysql_real_escape_string($_COOKIE['user_id']));
 
-if(isset($sess_user_id) || isset($cook_user_id)) {
-mysql_query("update 'users' 
-			set 'ckey'= '', 'ctime'= '' 
-			where 'id'='$sess_user_id' OR  'id' = '$cook_user_id'") or die(mysql_error());
+	if(isset($sess_user_id) || isset($cook_user_id)) {
+	mysql_query("update 'users' 
+				set 'ckey'= '', 'ctime'= '' 
+				where 'id'='$sess_user_id' OR  'id' = '$cook_user_id'") or die(mysql_error());
 }		
 
 /************ Delete the sessions****************/
