@@ -26,23 +26,48 @@ Note: If you use cpanel, the name will be like account_database
 define ("DB_HOST", "localhost"); // set database host
 define ("DB_USER", "root"); // set database user
 define ("DB_PASS","mzhong1986"); // set database password
-define ("DB_NAME","schooldb"); // set database name
-
+define ("DB_NAME","schooldb102"); // set database name
 
 if(!file_exists(DB_NAME))
 {
-	$db = sqlite_open(DB_NAME, 0666, $sqliteerror); 
+	$db = new PDO('sqlite:'.DB_NAME.'.db'); 
 	if($db)
-	{
-	    sqlite_query($db, 'CREATE TABLE foo (bar varchar(10))');
-	    sqlite_query($db, "INSERT INTO foo VALUES ('fnord')");
-	    $result = sqlite_query($db, 'select bar from foo');
-	    var_dump(sqlite_fetch_array($result)); 
+	{	
+		$sql = "
+			CREATE TABLE `students` (
+			  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			  `md5_id` varchar(200)  NOT NULL default '',
+			  `full_name` text NOT NULL,
+			  `user_name` varchar(200) NOT NULL default '',
+			  `user_email` varchar(220) NOT NULL default '',
+			  `user_level` INTEGER(4) NOT NULL default '1',
+			  `pwd` varchar(220) NOT NULL default '',
+			  `address` text NOT NULL,
+			  `tel` varchar(200) NOT NULL default '',
+			  `date` text NOT NULL default '0000-00-00',
+			  `users_ip` varchar(200) NOT NULL default '',
+			  `approved` int(1) NOT NULL default '0',
+			  `activation_code` int(10) NOT NULL default '0',
+			  `banned` int(1) NOT NULL default '0',
+			  `ckey` varchar(220) NOT NULL default '',
+			  `ctime` varchar(220) NOT NULL default ''
+			)";
+	    $db->exec($sql);
+		//$row = "INSERT INTO 'students' VALUES (54, '', 'admin', 'admin', 'admin@localhost', 5, '4c09e75fa6fe36038ac240e9e4e0126cedef6d8c85cf0a1ae', 'admin', 'Switzerland', '4433093999', '', 1, 0, 0, 'uqd1y4v', '1272992243')";
+		$row = "INSERT INTO 'students' VALUES (54, 'testid','flowerszhong','matthew.zhong','flowerszhong@gmail.com',
+			4,'test','中文','18676730824','2012-02-12','ddddd','1','xxxx','0','ckey','ctime')";
+		$row2 = "INSERT INTO 'students' VALUES (, 'testid','flowerszhong','matthew.zhong','flowerszhong@gmail.com',
+			4,'test','中文','18676730824','2012-02-12','ddddd','1','xxxx','0','ckey','ctime')";
+		$result = $db->exec($row);
+		var_dump($result);
+		$result1 = $db->exec($row);
+		var_dump($result1);
+
 	}else{
 		die("Couldn't select database");
 	}
 }else{
-	$db = sqlite_open(DB_NAME, 0666,$sqliteerror) or die("Couldn't select database");
+	$db = new PDO('sqlite:'.DB_NAME.'.db'); 
 }
 
 /* Registration Type (Automatic or Manual) 
@@ -98,7 +123,7 @@ if (!isset($_SESSION['user_id']) && !isset($_SESSION['user_name']) )
 	/* we double check cookie expiry time against stored in database */
 	
 	$cookie_user_id  = filter($_COOKIE['user_id']);
-	$rs_ctime = sqlite_query("select `ckey`,`ctime` from `users` where `id` ='$cookie_user_id'") or die(sqliteerror());
+	$rs_ctime = sqlite_query("select 'ckey','ctime' from 'users' where 'id' ='$cookie_user_id'") or die(sqliteerror());
 	list($ckey,$ctime) = sqlite_fetch_array($rs_ctime);
 	// coookie expiry
 	if( (time() - $ctime) > 60*60*24*COOKIE_TIME_OUT) {
@@ -106,7 +131,7 @@ if (!isset($_SESSION['user_id']) && !isset($_SESSION['user_name']) )
 		logout();
 		}
 /* Security check with untrusted cookies - dont trust value stored in cookie. 		
-/* We also do authentication check of the `ckey` stored in cookie matches that stored in database during login*/
+/* We also do authentication check of the 'ckey' stored in cookie matches that stored in database during login*/
 
 	 if( !empty($ckey) && is_numeric($_COOKIE['user_id']) && isUserID($_COOKIE['user_name']) && $_COOKIE['user_key'] == sha1($ckey)  ) {
 	 	  session_regenerate_id(); //against session fixation attacks.
@@ -260,9 +285,9 @@ $sess_user_id = strip_tags(mysql_real_escape_string($_SESSION['user_id']));
 $cook_user_id = strip_tags(mysql_real_escape_string($_COOKIE['user_id']));
 
 if(isset($sess_user_id) || isset($cook_user_id)) {
-mysql_query("update `users` 
-			set `ckey`= '', `ctime`= '' 
-			where `id`='$sess_user_id' OR  `id` = '$cook_user_id'") or die(mysql_error());
+mysql_query("update 'users' 
+			set 'ckey'= '', 'ctime'= '' 
+			where 'id'='$sess_user_id' OR  'id' = '$cook_user_id'") or die(mysql_error());
 }		
 
 /************ Delete the sessions****************/
