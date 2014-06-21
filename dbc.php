@@ -26,7 +26,7 @@ Note: If you use cpanel, the name will be like account_database
 define ("DB_HOST", "localhost"); // set database host
 define ("DB_USER", "root"); // set database user
 define ("DB_PASS","mzhong1986"); // set database password
-define ("DB_NAME","schooldb102"); // set database name
+define ("DB_NAME","schooldb445"); // set database name
 
 if(!file_exists(DB_NAME))
 {
@@ -35,34 +35,40 @@ if(!file_exists(DB_NAME))
 	{	
 		$sql = "
 			CREATE TABLE `students` (
-			  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			  `student_id` INTEGER NOT NULL PRIMARY KEY,
 			  `md5_id` varchar(200)  NOT NULL default '',
-			  `full_name` text NOT NULL,
-			  `user_name` varchar(200) NOT NULL default '',
+			  `user_name` text NOT NULL default '',
 			  `user_email` varchar(220) NOT NULL default '',
-			  `user_level` INTEGER(4) NOT NULL default '1',
+			  `user_level` INTEGER(4) default '1',
 			  `pwd` varchar(220) NOT NULL default '',
-			  `address` text NOT NULL,
-			  `tel` varchar(200) NOT NULL default '',
-			  `date` text NOT NULL default '0000-00-00',
-			  `users_ip` varchar(200) NOT NULL default '',
+			  
+			  `gender` int(1) default '0',
+			  `tel` varchar(200) default '',
+			  `building` text,
+
+			  `department` varchar(200) NOT NULL default '',
+			  `major` varchar(200) NOT NULL default '',
+			  `grade` varchar(200) NOT NULL default '',
+			  `class` varchar(200) NOT NULL default '',
+			  
+			  `reg_date` text NOT NULL default '0000-00-00',
+			  `users_ip` varchar(200) NOT NULL default '', 
 			  `approved` int(1) NOT NULL default '0',
 			  `activation_code` int(10) NOT NULL default '0',
-			  `banned` int(1) NOT NULL default '0',
-			  `ckey` varchar(220) NOT NULL default '',
-			  `ctime` varchar(220) NOT NULL default ''
+
+			  `banned` int(1) default '0',
+			  `ckey` varchar(220) default '',
+			  `ctime` varchar(220) default '',
+
+			  `net_id` varchar(220) default '',
+			  `net_pwd` varchar(220) default '',
+			  
+			  `last_pay_date` text,
+			  `expire_date` text,
+			  `recharging` int(1) default '1',
+			  `recharged` int(1) default '0'
 			)";
 	    $db->exec($sql);
-		//$row = "INSERT INTO 'students' VALUES (54, '', 'admin', 'admin', 'admin@localhost', 5, '4c09e75fa6fe36038ac240e9e4e0126cedef6d8c85cf0a1ae', 'admin', 'Switzerland', '4433093999', '', 1, 0, 0, 'uqd1y4v', '1272992243')";
-		$row = "INSERT INTO 'students' VALUES (54, 'testid','flowerszhong','matthew.zhong','flowerszhong@gmail.com',
-			4,'test','中文','18676730824','2012-02-12','ddddd','1','xxxx','0','ckey','ctime')";
-		$row2 = "INSERT INTO 'students' VALUES (, 'testid','flowerszhong','matthew.zhong','flowerszhong@gmail.com',
-			4,'test','中文','18676730824','2012-02-12','ddddd','1','xxxx','0','ckey','ctime')";
-		$result = $db->exec($row);
-		var_dump($result);
-		$result1 = $db->exec($row);
-		var_dump($result1);
-
 	}else{
 		die("Couldn't select database");
 	}
@@ -83,6 +89,7 @@ define('SALT_LENGTH', 9); // salt for password
 
 /* Specify user levels */
 define ("ADMIN_LEVEL", 5);
+define ("HEADER_LEVEL", 2);
 define ("USER_LEVEL", 1);
 define ("GUEST_LEVEL", 0);
 
@@ -145,7 +152,7 @@ if (!isset($_SESSION['user_id']) && !isset($_SESSION['user_name']) )
 		  $_SESSION['HTTP_USER_AGENT'] = md5($_SERVER['HTTP_USER_AGENT']);
 		  
 	   } else {
-	   logout();
+		logout();
 	   }
 
   } else {
@@ -206,6 +213,21 @@ function isUserID($username)
 		return false;
 	}
  }	
+
+
+ function get_Datetime_Now() {
+     $tz_object = new DateTimeZone('Brazil/East');
+     //date_default_timezone_set('Brazil/East');
+
+     $datetime = new DateTime();
+     $datetime->setTimezone($tz_object);
+     return $datetime->format('Y\-m\-d');
+ }
+
+function isUserName($username)
+{
+	return true;
+}
  
 function isURL($url) 
 {
@@ -274,6 +296,8 @@ function GenKey($length = 7)
   return $password;
 
 }
+
+
 
 
 function logout()

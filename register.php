@@ -1,140 +1,9 @@
-<!doctype html>
-<html>
 <?php 
 include 'dbc.php';
-
-$err = array();
-                     
-if($_POST['doRegister'] == 'Register') 
-{ 
-/******************* Filtering/Sanitizing Input *****************************
-This code filters harmful script code and escapes data of all POST data
-from the user submitted form.
-*****************************************************************/
-foreach($_POST as $key =>$value) {
-    $data[$key] = filter($value);
-}
-
-if(empty($data['full_name']) || strlen($data['full_name'])< 4)
-{
-$err[] = "ERROR - Invalid name. Please enter atleast 3 or more characters for your name";
-//header("Location: register.php?msg=$err");
-//exit();
-}
-
-// Validate User Name
-if (!isUserID($data['user_name'])) {
-$err[] = "ERROR - Invalid user name. It can contain alphabet, number and underscore.";
-//header("Location: register.php?msg=$err");
-//exit();
-}
-
-// Validate Email
-if(!isEmail($data['usr_email'])) {
-$err[] = "ERROR - Invalid email address.";
-//header("Location: register.php?msg=$err");
-//exit();
-}
-// Check User Passwords
-if (!checkPwd($data['pwd'],$data['pwd2'])) {
-$err[] = "ERROR - Invalid Password or mismatch. Enter 5 chars or more";
-//header("Location: register.php?msg=$err");
-//exit();
-}
-      
-$user_ip = $_SERVER['REMOTE_ADDR'];
-
-// stores sha1 of password
-$sha1pass = PwdHash($data['pwd']);
-
-// Automatically collects the hostname or domain  like example.com) 
-$host  = $_SERVER['HTTP_HOST'];
-$host_upper = strtoupper($host);
-$path   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-
-// Generates activation code simple 4 digit number
-$activ_code = rand(1000,9999);
-
-$usr_email = $data['usr_email'];
-$user_name = $data['user_name'];
-
-/************ USER EMAIL CHECK ************************************
-This code does a second check on the server side if the email already exists. It 
-queries the database and if it has any existing email it throws user email already exists
-*******************************************************************/
-
-$rs_duplicate = mysql_query("select count(*) as total from users where user_email='$usr_email' OR user_name='$user_name'") or die(mysql_error());
-list($total) = mysql_fetch_row($rs_duplicate);
-
-if ($total >0)
-{
-$err[] = "ERROR - The username/email already exists. Please try again with different username and email.";
-//header("Location: register.php?msg=$err");
-//exit();
-}
-/***************************************************************************/
-
-if(empty($err)) {
-
-$sql_insert = "INSERT into `users`
-            (`full_name`,`user_email`,`pwd`,`address`,`tel`,`fax`,`website`,`date`,`users_ip`,`activation_code`,`country`,`user_name`
-            )
-            VALUES
-            ('$data[full_name]','$usr_email','$sha1pass','$data[address]','$data[tel]','$data[fax]','$data[web]'
-            ,now(),'$user_ip','$activ_code','$data[country]','$user_name'
-            )
-            ";
-            
-mysql_query($sql_insert,$link) or die("Insertion Failed:" . mysql_error());
-$user_id = mysql_insert_id($link);  
-$md5_id = md5($user_id);
-mysql_query("update users set md5_id='$md5_id' where id='$user_id'");
-//  
-echo "
-        <h3>Thank You</h3>
-        We received your submission.";
-
-if($user_registration)  {
-$a_link = "
-*****ACTIVATION LINK*****\n
-http://$host$path/activate.php?user=$md5_id&activ_code=$activ_code
-"; 
-} else {
-    $a_link = "Your account is *PENDING APPROVAL* and will be soon activated the administrator.";
-}
-
-$message = 
-"Hello \n
-Thank you for registering with us. Here are your login details...\n
-
-User ID: $user_name
-Email: $usr_email \n 
-Passwd: $data[pwd] \n
-
-$a_link
-
-Thank You
-
-Administrator
-$host_upper
-______________________________________________________
-THIS IS AN AUTOMATED RESPONSE. 
-***DO NOT RESPOND TO THIS EMAIL****
-";
-
-    mail($usr_email, "Login Details", $message,
-    "From: \"Member Registration\"
-        <auto-reply@$host>
-            \r\n" .
-     "X-Mailer: PHP/" . phpversion());
-
-  header("Location: thankyou.php");  
-  exit();
-     
-     } 
- }                   
-
+include 'register-util.php';
 ?>
+<!DOCTYPE html>
+<html>
 <head>
 <title>填写注册信息</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -154,7 +23,17 @@ $(document).ready(function(){
             <link href="styles.css" rel="stylesheet" type="text/css"></head>
 
 <body>
-            <table width="100%" border="0" cellspacing="0" cellpadding="5" class="main">
+
+<?php   
+if(!empty($err))  {
+    echo "<div class=\"msg\">";
+    foreach ($err as $e) {
+        echo "* $e <br>";
+    }
+    echo "</div>"; 
+}
+?> 
+ <table width="100%" border="0" cellspacing="0" cellpadding="5" class="main">
                 <tr>
                     <td colspan="3">&nbsp;</td>
                 </tr>
@@ -167,44 +46,20 @@ $(document).ready(function(){
                         <p>&nbsp;</p>
                     </td>
                     <td width="732" valign="top">
-                        <p>
-                            <?php 
-     if (isset($_GET['done'])) { ?>
-                            <h2>Thank you</h2>
-                            注册完成
-                            <a href="login.php">login here</a>
-                            ";
-                            <?php exit();
-      }
-    ?></p>
-
-                        <h3 class="titlehdr">注册</h3>
-                        <?php   
-     if(!empty($err))  {
-       echo "<div class=\"msg\">
-                        ";
-      foreach ($err as $e) {
-        echo "* $e<br>";
-        }
-        echo "</div>";  
-       }
-     ?>
-        <br>
-        <br>
         <form action="register.php" method="post" name="regForm" id="regForm" >
             <table width="95%" border="0" cellpadding="3" cellspacing="3" class="forms">
                 <tr>
                     <td>
-                        name
+                        姓名
                         <span class="required"> <font color="#CC0000">*</font>
                         </span>
                     </td>
                     <td>
-                        <input name="full_name" type="text" id="full_name" class="required"></td>
+                        <input name="user_name" type="text" id="user_name" class="required"></td>
                 </tr>
                 <tr>
                     <td>
-                        Phone
+                        电话
                         <span class="required"> <font color="#CC0000">*</font>
                         </span>
                     </td>
@@ -220,22 +75,7 @@ $(document).ready(function(){
                 </tr>
                 <tr>
                     <td>
-                        Username
-                        <span class="required">
-                            <font color="#CC0000">*</font>
-                        </span>
-                    </td>
-                    <td>
-                        <input name="user_name" type="text" id="user_name" class="required username" minlength="5" >
-                        <input name="btnAvailable" type="button" id="btnAvailable" 
-  onclick='$("#checkid").html("Please wait..."); $.get("checkuser.php",{ cmd: "check", user: $("#user_name").val() } ,function(data){  $("#checkid").html(data); });'
-  value="Check Availability">
-                        <span style="color:red; font: bold 12px verdana; " id="checkid" ></span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Your Email
+                        邮箱地址
                         <span class="required">
                             <font color="#CC0000">*</font>
                         </span>
@@ -247,7 +87,7 @@ $(document).ready(function(){
                 </tr>
                 <tr>
                     <td>
-                        Password
+                        密码
                         <span class="required">
                             <font color="#CC0000">*</font>
                         </span>
@@ -259,7 +99,7 @@ $(document).ready(function(){
                 </tr>
                 <tr>
                     <td>
-                        Retype Password
+                        密码确认
                         <span class="required">
                             <font color="#CC0000">*</font>
                         </span>
@@ -286,7 +126,7 @@ $(document).ready(function(){
                 <tr>
                     <td>年级</td>
                     <td>
-                        <select name="">
+                        <select name="grade">
                             <option value="2012">2012</option>
                             <option value="2013">2013</option>
                             <option value="2014">2014</option>
@@ -295,15 +135,37 @@ $(document).ready(function(){
                 </tr>
 
                 <tr>
-                    <td>院系</td>
+                    <td>系别</td>
                     <td>
-                        <select name="">
-                            <option value="op1">op2</option>
-                            <option value="op1">op2</option>
-                            <option value="op1">op2</option>
+                        <select name="department">
+                            <option value="op1">op1</option>
+                            <option value="op2">op2</option>
+                            <option value="op3">op3</option>
                         </select>
                     </td>
                 </tr>
+
+                <tr>
+                    <td>专业</td>
+                    <td>
+                        <select name="major">
+                            <option value="major1">major1</option>
+                            <option value="major2">major2</option>
+                            <option value="major3">major3</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>班集</td>
+                    <td>
+                        <select name="major">
+                            <option value="class1">class1</option>
+                            <option value="class2">class2</option>
+                            <option value="class3">class3</option>
+                        </select>
+                    </td>
+                </tr>
+
         </table>
         <p align="center">
             <input name="doRegister" type="submit" id="doRegister" value="Register"></p>
@@ -313,6 +175,5 @@ $(document).ready(function(){
 </tr>
 
 </table>
-
 </body>
 </html>
