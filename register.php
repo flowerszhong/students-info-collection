@@ -46,7 +46,7 @@ if(!empty($err))  {
                         <p>&nbsp;</p>
                     </td>
                     <td width="732" valign="top">
-        <form action="register.php" method="post" name="regForm" id="regForm" >
+        <form action="register.php" method="post" name="regForm" id="regForm" accept-charset="UTF-8" >
             <table width="95%" border="0" cellpadding="3" cellspacing="3" class="forms">
                 <tr>
                     <td>

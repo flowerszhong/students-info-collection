@@ -26,18 +26,21 @@ Note: If you use cpanel, the name will be like account_database
 define ("DB_HOST", "localhost"); // set database host
 define ("DB_USER", "root"); // set database user
 define ("DB_PASS","mzhong1986"); // set database password
-define ("DB_NAME","schooldb445"); // set database name
+define ("DB_NAME","schooldb8xx333"); // set database name
+declare(encoding='UTF-8');
+
 
 if(!file_exists(DB_NAME))
 {
 	$db = new PDO('sqlite:'.DB_NAME.'.db'); 
+	$db->exec("SET CHARACTER SET GBK");
 	if($db)
 	{	
 		$sql = "
 			CREATE TABLE `students` (
 			  `student_id` INTEGER NOT NULL PRIMARY KEY,
 			  `md5_id` varchar(200)  NOT NULL default '',
-			  `user_name` text NOT NULL default '',
+			  `user_name` varchar(200) NOT NULL default '',
 			  `user_email` varchar(220) NOT NULL default '',
 			  `user_level` INTEGER(4) default '1',
 			  `pwd` varchar(220) NOT NULL default '',
@@ -73,8 +76,10 @@ if(!file_exists(DB_NAME))
 		die("Couldn't select database");
 	}
 }else{
-	$db = new PDO('sqlite:'.DB_NAME.'.db'); 
+	$db = new PDO('sqlite:'.DB_NAME.'.db;chartset=GBK'); 
 }
+
+$db->exec("set names GBK");
 
 /* Registration Type (Automatic or Manual) 
  1 -> Automatic Registration (Users will receive activation code and they will be automatically approved after clicking activation link)
@@ -165,13 +170,17 @@ if (!isset($_SESSION['user_id']) && !isset($_SESSION['user_name']) )
 
 
 function filter($data) {
-	$data = trim(htmlentities(strip_tags($data)));
+	// $data = trim(htmlentities(strip_tags($data)));//fuck htmlentities,not for chinese
+	$data = trim(strip_tags($data));
+
+
 	
 	if (get_magic_quotes_gpc())
 		$data = stripslashes($data);
 	
 	$data = mysql_real_escape_string($data);
 	
+
 	return $data;
 }
 
@@ -349,5 +358,17 @@ function checkAdmin() {
 		return 0 ;
 	}
 }
+
+function strToUtf8 ($vector)
+{
+    $from_chr= mb_detect_encoding($vector,array('UTF-8','ASCII','EUC-CN','CP936','BIG-5','GB2312','GBK'));
+    echo $from_chr;
+    if($from_chr!="UTF-8")
+    {
+        $vector = iconv($from_chr, "UTF-8", $vector);
+    }
+    return $vector;
+}
+
 
 ?>

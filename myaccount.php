@@ -1,13 +1,14 @@
 <?php 
 include 'dbc.php';
 page_protect();
-
-
+header('Content-Type: text/html; charset=UTF-8');
 ?>
+
+<!DOCTYPE html>
 <html>
 <head>
 <title>My Account</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 <link href="styles.css" rel="stylesheet" type="text/css">
 </head>
@@ -43,7 +44,7 @@ if (checkAdmin()) {
       <p>&nbsp;</p>
       <p>&nbsp;</p></td>
     <td width="732" valign="top"><p>&nbsp;</p>
-      <h3 class="titlehdr">Welcome <?php echo $_SESSION['user_name'];?></h3>  
+      <h3 class="titlehdr">Welcome <?php echo $_SESSION['user_name']; ?></h3>  
 	  <?php	
       if (isset($_GET['msg'])) {
 	  echo "<div class=\"error\">$_GET[msg]</div>";

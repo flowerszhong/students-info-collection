@@ -46,6 +46,7 @@ $path   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 $activ_code = rand(1000,9999);
 
 $usr_email = $data['usr_email'];
+// $user_name = base64_encode($data['user_name']);
 $user_name = $data['user_name'];
 
 /************ USER EMAIL CHECK ************************************

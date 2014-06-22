@@ -1,18 +1,7 @@
 <?php 
-/*************** PHP LOGIN SCRIPT V 2.3*********************
-(c) Balakrishnan 2009. All Rights Reserved
-
-Usage: This script can be used FREE of charge for any commercial or personal projects. Enjoy!
-
-Limitations:
-- This script cannot be sold.
-- This script should have copyright notice intact. Dont remove it please...
-- This script may not be provided for download except from its original site.
-
-For further usage, please contact me.
-
-***********************************************************/
 include 'dbc.php';
+
+
 
 $err = array();
 
@@ -35,22 +24,30 @@ $pass = $data['pwd'];
 if (strpos($user_email,'@') === false) {
     $user_cond = "user_name='$user_email'";
 } else {
-      $user_cond = "user_email='$user_email'";
-    
+    $user_cond = "user_email='$user_email'";
 }
 
-	
-$result = mysql_query("SELECT `id`,`pwd`,`full_name`,`approved`,`user_level` FROM users WHERE 
+
+$sql_select = "SELECT `student_id`,`pwd`,`user_name`,`approved`,`user_level` FROM students WHERE 
            $user_cond
-			AND `banned` = '0'
-			") or die (mysql_error()); 
-$num = mysql_num_rows($result);
+			AND `banned` = '0'";
+// echo $sql_select;		
+// $result = $db->query($sql_select) or die(print_r($db->errorInfo())); 
+$result = $db->query($sql_select); 
+
+// var_dump($result);
+
+$row = $result->fetch();
+// var_dump($row);
 
   // Match row found with more than 1 results  - the user is authenticated. 
-    if ( $num > 0 ) { 
+    if ($row) { 
 	
-	list($id,$pwd,$full_name,$approved,$user_level) = mysql_fetch_row($result);
-	
+	list($id,$pwd,$full_name,$approved,$user_level) = $row;
+
+	// $full_name = base64_decode($full_name);
+	$approved = true;
+
 	if(!$approved) {
 	//$msg = urlencode("Account not activated. Please check your email for activation code");
 	$err[] = "Account not activated. Please check your email for activation code";
@@ -76,7 +73,7 @@ $num = mysql_num_rows($result);
 		//update the timestamp and key for cookie
 		$stamp = time();
 		$ckey = GenKey();
-		mysql_query("update users set `ctime`='$stamp', `ckey` = '$ckey' where id='$id'") or die(mysql_error());
+		$db->exec("update students set `ctime`='$stamp', `ckey` = '$ckey' where student_id='$id'") or die($db->errorInfo());
 		
 		//set a cookie 
 		
@@ -85,6 +82,7 @@ $num = mysql_num_rows($result);
 				  setcookie("user_key", sha1($ckey), time()+60*60*24*COOKIE_TIME_OUT, "/");
 				  setcookie("user_name",$_SESSION['user_name'], time()+60*60*24*COOKIE_TIME_OUT, "/");
 				   }
+		header("Content-Type: text/html; charset=utf-8");
 		  header("Location: myaccount.php");
 		 }
 		}
@@ -105,7 +103,7 @@ $num = mysql_num_rows($result);
 <html>
 <head>
 <title>Members Login</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <script language="JavaScript" type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="js/jquery.validate.js"></script>
   <script>
@@ -137,6 +135,7 @@ $num = mysql_num_rows($result);
 	  This code is to show error messages 
 	  **************************************************************************/
 	  if(!empty($err))  {
+	  	echo "error";
 	   echo "<div class=\"msg\">";
 	  foreach ($err as $e) {
 	    echo "$e <br>";
