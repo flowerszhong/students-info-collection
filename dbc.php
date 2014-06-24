@@ -26,7 +26,7 @@ Note: If you use cpanel, the name will be like account_database
 define ("DB_HOST", "localhost"); // set database host
 define ("DB_USER", "root"); // set database user
 define ("DB_PASS","mzhong1986"); // set database password
-define ("DB_NAME","schooldb8xx333"); // set database name
+define ("DB_NAME","schooldb9x333"); // set database name
 declare(encoding='UTF-8');
 
 
@@ -76,7 +76,7 @@ if(!file_exists(DB_NAME))
 		die("Couldn't select database");
 	}
 }else{
-	$db = new PDO('sqlite:'.DB_NAME.'.db;chartset=GBK'); 
+	$db = new PDO('sqlite:'.DB_NAME.'.db'); 
 }
 
 $db->exec("set names GBK");

@@ -5,6 +5,14 @@ foreach($_GET as $key => $value) {
 	$get[$key] = filter($value);
 }
 
+
+
+if($get['done']){
+  header("Location: activate-ok.php");             
+  exit();
+}
+
+
 /******** EMAIL ACTIVATION LINK**********************/
 if(isset($get['user']) && !empty($get['activ_code']) && !empty($get['user']) && is_numeric($get['activ_code']) ) {
 
@@ -15,22 +23,26 @@ $user = mysql_real_escape_string($get['user']);
 $activ = mysql_real_escape_string($get['activ_code']);
 
 //check if activ code and user is valid
-$rs_check = mysql_query("select id from users where md5_id='$user' and activation_code='$activ'") or die (mysql_error()); 
-$num = mysql_num_rows($rs_check);
+$rs_check = $db->query("select student_id from students where md5_id='$user' and activation_code='$activ'") or die (print_r($db->errorInfo())); 
+$rs_check_row = $rs_check->fetch();
+// var_dump($rs_check_row);
+
+$hasRecord = $rs_check_row['student_id'];
   // Match row found with more than 1 results  - the user is authenticated. 
-    if ( $num <= 0 ) { 
-	$err[] = "Sorry no such account exists or activation code invalid.";
-	//header("Location: activate.php?msg=$msg");
-	//exit();
+  if ( !$hasRecord) { 
+   $err[] = "账号不存在或激活码失效";
+	 // $err[] = "Sorry no such account exists or activation code invalid.";
+	header("Location: activate.php?msg=$msg");
+	exit();
 	}
 
 if(empty($err)) {
 // set the approved field to 1 to activate the account
-$rs_activ = mysql_query("update users set approved='1' WHERE 
-						 md5_id='$user' AND activation_code = '$activ' ") or die(mysql_error());
-$msg[] = "Thank you. Your account has been activated.";
-//header("Location: activate.php?done=1&msg=$msg");						 
-//exit();
+$rs_activ = $db->exec("update students set approved='1' WHERE 
+						 md5_id='$user' AND activation_code = '$activ' ") or die(print_r($db->errorInfo()));
+$msg[] = "Thank you. 您的账号已经激活";
+header("Location: activate.php?done=1");						 
+exit();
  }
 }
 
@@ -43,7 +55,11 @@ $msg = array();
 $user_email = mysql_real_escape_string($_POST['user_email']);
 $activ = mysql_real_escape_string($_POST['activ_code']);
 //check if activ code and user is valid as precaution
-$rs_check = mysql_query("select id from users where user_email='$user_email' and activation_code='$activ'") or die (mysql_error()); 
+$rs_check = $db->exec("select id from students where user_email='$user_email' and activation_code='$activ'") or die (mysql_error()); 
+$rs_check_row = $rs_check.fetch();
+
+var_dump($rs_check_row);
+
 $num = mysql_num_rows($rs_check);
   // Match row found with more than 1 results  - the user is authenticated. 
     if ( $num <= 0 ) { 
@@ -64,10 +80,11 @@ if(empty($err)) {
 	
 
 ?>
+<!DOCTYPE html>
 <html>
 <head>
 <title>User Account Activation</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <script language="JavaScript" type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="js/jquery.validate.js"></script>
   <script>

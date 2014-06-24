@@ -1,9 +1,6 @@
 <?php 
 include 'dbc.php';
 
-
-
-
 /******************* ACTIVATION BY FORM**************************/
 if ($_POST['doReset']=='Reset')
 {
@@ -14,20 +11,21 @@ foreach($_POST as $key => $value) {
 	$data[$key] = filter($value);
 }
 if(!isEmail($data['user_email'])) {
-$err[] = "ERROR - Please enter a valid email"; 
+$err[] = "ERROR - 请输入正确的邮箱地址"; 
 }
 
 $user_email = $data['user_email'];
 
 //check if activ code and user is valid as precaution
-$rs_check = mysql_query("select id from users where user_email='$user_email'") or die (mysql_error()); 
-$num = mysql_num_rows($rs_check);
-  // Match row found with more than 1 results  - the user is authenticated. 
-    if ( $num <= 0 ) { 
-	$err[] = "Error - Sorry no such account exists or registered.";
-	//header("Location: forgot.php?msg=$msg");
-	//exit();
-	}
+$rs_check = $db->query("select student_id from students where user_email='$user_email'") or die (print_r($db->errorInfo())); 
+$rs_check_row = $rs_check->fetch();
+
+// Match row found with more than 1 results  - the user is authenticated. 
+if (!$rs_check_row['student_id'] ) { 
+  $err[] = "Error - Sorry no such account exists or registered.";
+  //header("Location: forgot.php?msg=$msg");
+  //exit();
+}
 
 
 if(empty($err)) {
@@ -36,34 +34,47 @@ $new_pwd = GenPwd();
 $pwd_reset = PwdHash($new_pwd);
 //$sha1_new = sha1($new);	
 //set update sha1 of new password + salt
-$rs_activ = mysql_query("update users set pwd='$pwd_reset' WHERE 
-						 user_email='$user_email'") or die(mysql_error());
+$rs_activ = $db->exec("update students set pwd='$pwd_reset' WHERE 
+						 user_email='$user_email'") or die(print_r($db->errorInfo()));
 						 
 $host  = $_SERVER['HTTP_HOST'];
 $host_upper = strtoupper($host);						 
 						 
 //send email
 
+
 $message = 
-"Here are your new password details ...\n
-User Email: $user_email \n
-Passwd: $new_pwd \n
+"<p>以下账号新密码</p>
+<ul>
+    <li>邮箱: $user_email </li>
+    <li>密码: $new_pwd</li>
+</ul>
 
-Thank You
-
-Administrator
-$host_upper
-______________________________________________________
-THIS IS AN AUTOMATED RESPONSE. 
-***DO NOT RESPOND TO THIS EMAIL****
+<p>Administrator</p>
+<p>______________________________________________________</p>
+该邮件为系统自动发现，请不要回复。<br/>
+THIS IS AN AUTOMATED RESPONSE. <br/>
+***DO NOT RESPOND TO THIS EMAIL****<br/>
 ";
 
-	mail($user_email, "Reset Password", $message,
-    "From: \"Member Registration\" <auto-reply@$host>\r\n" .
-     "X-Mailer: PHP/" . phpversion());						 
-						 
-$msg[] = "Your account password has been reset and a new password has been sent to your email address.";						 
-						 
+
+require("smtp/smtp.php"); 
+########################################## 
+$smtpserver = "smtp.163.com";//SMTP服务器 
+$smtpserverport = 25;//SMTP服务器端口 
+$smtpusermail = "srxhzyh@163.com";//SMTP服务器的用户邮箱 
+$smtpemailto = "flowerszhong@gmail.com";//发送给谁 
+$smtpuser = "srxhzyh";//SMTP服务器的用户帐号 
+$smtppass = "3961908";//SMTP服务器的用户密码 
+$mailsubject = "更改密码成功";//邮件主题 
+$mailbody = $message;//邮件内容 
+$mailtype = "HTML";//邮件格式（HTML/TXT）,TXT为文本邮件 
+########################################## 
+$smtp = new smtp($smtpserver,$smtpserverport,true,$smtpuser,$smtppass);//这里面的一个true是表示使用身份验证,否则不使用身份验证. 
+$smtp->debug = false;//是否显示发送的调试信息 
+$smtpOK = $smtp->sendmail($smtpemailto, $smtpusermail, $mailsubject, $mailbody, $mailtype); 
+
+
 //$msg = urlencode();
 //header("Location: forgot.php?msg=$msg");						 
 //exit();
@@ -73,7 +84,7 @@ $msg[] = "Your account password has been reset and a new password has been sent 
 <html>
 <head>
 <title>Forgot Password</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <script language="JavaScript" type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="js/jquery.validate.js"></script>
   <script>
