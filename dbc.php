@@ -26,14 +26,12 @@ Note: If you use cpanel, the name will be like account_database
 define ("DB_HOST", "localhost"); // set database host
 define ("DB_USER", "root"); // set database user
 define ("DB_PASS","mzhong1986"); // set database password
-define ("DB_NAME","schooldb9x333"); // set database name
+define ("DB_NAME","schooldb9x10.db"); // set database name
 declare(encoding='UTF-8');
-
 
 if(!file_exists(DB_NAME))
 {
-	$db = new PDO('sqlite:'.DB_NAME.'.db'); 
-	$db->exec("SET CHARACTER SET GBK");
+	$db = new PDO('sqlite:'.DB_NAME); 
 	if($db)
 	{	
 		$sql = "
@@ -76,10 +74,9 @@ if(!file_exists(DB_NAME))
 		die("Couldn't select database");
 	}
 }else{
-	$db = new PDO('sqlite:'.DB_NAME.'.db'); 
+	$db = new PDO('sqlite:'.DB_NAME); 
 }
 
-$db->exec("set names GBK");
 
 /* Registration Type (Automatic or Manual) 
  1 -> Automatic Registration (Users will receive activation code and they will be automatically approved after clicking activation link)
@@ -118,7 +115,7 @@ global $db;
 
 /* Secure against Session Hijacking by checking user agent */
 if (isset($_SESSION['HTTP_USER_AGENT']))
-{
+{	
     if ($_SESSION['HTTP_USER_AGENT'] != md5($_SERVER['HTTP_USER_AGENT']))
     {
         logout();
@@ -135,8 +132,13 @@ if (!isset($_SESSION['user_id']) && !isset($_SESSION['user_name']) )
 	/* we double check cookie expiry time against stored in database */
 	
 	$cookie_user_id  = filter($_COOKIE['user_id']);
-	$rs_ctime = sqlite_query("select 'ckey','ctime' from 'users' where 'id' ='$cookie_user_id'") or die(sqliteerror());
-	list($ckey,$ctime) = sqlite_fetch_array($rs_ctime);
+	$rs_ctime = $db->query("select 'ckey','ctime' from 'students' where 'student_id' ='$cookie_user_id'") or die(sqliteerror());
+	$rs_ctime_row = $rs_ctime->fetch();
+
+	list($ckey,$ctime) = $rs_ctime_row;
+
+	// var_dump($ckey);
+
 	// coookie expiry
 	if( (time() - $ctime) > 60*60*24*COOKIE_TIME_OUT) {
 
@@ -151,8 +153,9 @@ if (!isset($_SESSION['user_id']) && !isset($_SESSION['user_name']) )
 		  $_SESSION['user_id'] = $_COOKIE['user_id'];
 		  $_SESSION['user_name'] = $_COOKIE['user_name'];
 		/* query user level from database instead of storing in cookies */	
-		  list($user_level) = sqlite_fetch_array(sqlite_query("select user_level from users where id='$_SESSION[user_id]'"));
-
+		$rs_userlevel = $db->query("select user_level from students where id='$_SESSION[user_id]'");
+		  $user_level_row = $rs_userlevel->fetch();
+		  $user_level = $user_level_row['user_level'];
 		  $_SESSION['user_level'] = $user_level;
 		  $_SESSION['HTTP_USER_AGENT'] = md5($_SERVER['HTTP_USER_AGENT']);
 		  
@@ -313,30 +316,42 @@ function logout()
 {
 	global $db;
 	session_start();
+	// var_dump($db);
 
 	$sess_user_id = strip_tags(mysql_real_escape_string($_SESSION['user_id']));
 	$cook_user_id = strip_tags(mysql_real_escape_string($_COOKIE['user_id']));
 
 	if(isset($sess_user_id) || isset($cook_user_id)) {
-	mysql_query("update 'users' 
-				set 'ckey'= '', 'ctime'= '' 
-				where 'id'='$sess_user_id' OR  'id' = '$cook_user_id'") or die(mysql_error());
-}		
+		// echo $sess_user_id;
+		// echo $cook_user_id;
+		// $sql_clear = "update students set 'ckey'= '', 'ctime'= '' where 'student_id'='$sess_user_id' OR 'student_id' = '$cook_user_id'";
+		$sql_update = "UPDATE students SET 'ckey'= '', 'ctime'= '' where 'student_id'='$sess_user_id' OR 'student_id' = '$cook_user_id'";
+		// $sql_clear = "update 'students' set 'ckey'= '', 'ctime'= '' where 'student_id'='$sess_user_id'";
+		// echo $sql_clear;
+		$update_result = $db->exec($sql_update);
 
-/************ Delete the sessions****************/
-unset($_SESSION['user_id']);
-unset($_SESSION['user_name']);
-unset($_SESSION['user_level']);
-unset($_SESSION['HTTP_USER_AGENT']);
-session_unset();
-session_destroy(); 
+		if($update_result === false)
+		{
+		    print_r($db->errorInfo());
+		    $error = $db->errorInfo();
+		    die ("Error: (".$error[0].':'.$error[1].') '.$error[2]);
+		}
+	}
 
-/* Delete the cookies*******************/
-setcookie("user_id", '', time()-60*60*24*COOKIE_TIME_OUT, "/");
-setcookie("user_name", '', time()-60*60*24*COOKIE_TIME_OUT, "/");
-setcookie("user_key", '', time()-60*60*24*COOKIE_TIME_OUT, "/");
+	/************ Delete the sessions****************/
+	unset($_SESSION['user_id']);
+	unset($_SESSION['user_name']);
+	unset($_SESSION['user_level']);
+	unset($_SESSION['HTTP_USER_AGENT']);
+	session_unset();
+	session_destroy(); 
 
-header("Location: login.php");
+	/* Delete the cookies*******************/
+	setcookie("user_id", '', time()-60*60*24*COOKIE_TIME_OUT, "/");
+	setcookie("user_name", '', time()-60*60*24*COOKIE_TIME_OUT, "/");
+	setcookie("user_key", '', time()-60*60*24*COOKIE_TIME_OUT, "/");
+
+	header("Location: login.php");
 }
 
 // Password and salt generation
@@ -352,6 +367,8 @@ function PwdHash($pwd, $salt = null)
 }
 
 function checkAdmin() {
+	// var_dump($_SESSION);
+	// echo 'user_level'.$_SESSION['user_level'];
 	if($_SESSION['user_level'] == ADMIN_LEVEL) {
 		return 1;
 	} else { 
@@ -362,7 +379,7 @@ function checkAdmin() {
 function strToUtf8 ($vector)
 {
     $from_chr= mb_detect_encoding($vector,array('UTF-8','ASCII','EUC-CN','CP936','BIG-5','GB2312','GBK'));
-    echo $from_chr;
+    // echo $from_chr;
     if($from_chr!="UTF-8")
     {
         $vector = iconv($from_chr, "UTF-8", $vector);

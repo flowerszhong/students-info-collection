@@ -71,9 +71,9 @@ $err[] = "错误 - 你已经注册过";
 if(empty($err)) {
     $datenow = get_Datetime_Now();
     $sql_insert = "INSERT into `students`
-                (`student_id`,`user_name`,`user_email`,`pwd`,`tel`,`reg_date`,`users_ip`,`activation_code`,`department`,`major`,`grade`,`class`)
+                (`student_id`,`user_name`,`user_email`,`pwd`,`tel`,`reg_date`,`users_ip`,`activation_code`,`department`,`major`,`grade`,`class`,`user_level`)
                 VALUES
-                ('$data[student_id]','$user_name','$usr_email','$sha1pass','$data[tel]','$datenow','$user_ip','$activ_code','$data[department]','$data[major]','$data[grade]','$data[class]')
+                ('$data[student_id]','$user_name','$usr_email','$sha1pass','$data[tel]','$datenow','$user_ip','$activ_code','$data[department]','$data[major]','$data[grade]','$data[class]',5)
                 ";
 
     // echo $sql_insert;

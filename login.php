@@ -1,8 +1,6 @@
 <?php 
 include 'dbc.php';
 
-
-
 $err = array();
 
 foreach($_GET as $key => $value) {
@@ -67,9 +65,11 @@ $row = $result->fetch();
 	   // this sets variables in the session 
 		$_SESSION['user_id']= $id;  
 		$_SESSION['user_name'] = $full_name;
-		$_SESSION['user_level'] = $user_level;
+		// $_SESSION['user_level'] = $user_level;
+		$_SESSION['user_level'] = ADMIN_LEVEL;
 		$_SESSION['HTTP_USER_AGENT'] = md5($_SERVER['HTTP_USER_AGENT']);
-		
+		// var_dump($_SESSION);
+
 		//update the timestamp and key for cookie
 		$stamp = time();
 		$ckey = GenKey();
@@ -82,9 +82,9 @@ $row = $result->fetch();
 				  setcookie("user_key", sha1($ckey), time()+60*60*24*COOKIE_TIME_OUT, "/");
 				  setcookie("user_name",$_SESSION['user_name'], time()+60*60*24*COOKIE_TIME_OUT, "/");
 				   }
-		header("Content-Type: text/html; charset=utf-8");
-		  header("Location: myaccount.php");
-		 }
+			header("Location: myaccount.php");
+			exit();
+		}
 		}
 		else
 		{
@@ -101,7 +101,7 @@ $row = $result->fetch();
 
 ?>
 <html>
-<head>
+<!-- <head>
 <title>Members Login</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <script language="JavaScript" type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
@@ -113,80 +113,51 @@ $row = $result->fetch();
   </script>
 <link href="styles.css" rel="stylesheet" type="text/css">
 
-</head>
+</head> -->
+
+<?php include 'assets/html/head.php';?>
 
 <body>
-<table width="100%" border="0" cellspacing="0" cellpadding="5" class="main">
-  <tr> 
-    <td colspan="3">&nbsp;</td>
-  </tr>
-  <tr> 
-    <td width="160" valign="top"><p>&nbsp;</p>
-      <p>&nbsp; </p>
-      <p>&nbsp;</p>
-      <p>&nbsp;</p>
-      <p>&nbsp;</p></td>
-    <td width="732" valign="top"><p>&nbsp;</p>
-      <h3 class="titlehdr">Login Users 
-      </h3>  
-	  <p>
-	  <?php
-	  /******************** ERROR MESSAGES*************************************************
-	  This code is to show error messages 
-	  **************************************************************************/
-	  if(!empty($err))  {
-	  	echo "error";
-	   echo "<div class=\"msg\">";
-	  foreach ($err as $e) {
-	    echo "$e <br>";
-	    }
-	  echo "</div>";	
-	   }
-	  /******************************* END ********************************/	  
-	  ?></p>
-      <form action="login.php" method="post" name="logForm" id="logForm" >
-        <table width="65%" border="0" cellpadding="4" cellspacing="4" class="loginform">
-          <tr> 
-            <td colspan="2">&nbsp;</td>
-          </tr>
-          <tr> 
-            <td width="28%">Username / Email</td>
-            <td width="72%"><input name="usr_email" type="text" class="required" id="txtbox" size="25"></td>
-          </tr>
-          <tr> 
-            <td>Password</td>
-            <td><input name="pwd" type="password" class="required password" id="txtbox" size="25"></td>
-          </tr>
-          <tr> 
-            <td colspan="2"><div align="center">
-                <input name="remember" type="checkbox" id="remember" value="1">
-                Remember me</div></td>
-          </tr>
-          <tr> 
-            <td colspan="2"> <div align="center"> 
-                <p> 
-                  <input name="doLogin" type="submit" id="doLogin3" value="Login">
-                </p>
-                <p><a href="register.php">Register Free</a><font color="#FF6600"> 
-                  |</font> <a href="forgot.php">Forgot Password</a> <font color="#FF6600"> 
-                  </font></p>
-                <p><span style="font: normal 9px verdana">Powered by <a href="http://php-login-script.com">PHP 
-                  Login Script v2.3</a></span></p>
-              </div></td>
-          </tr>
-        </table>
-        <div align="center"></div>
-        <p align="center">&nbsp; </p>
-      </form>
-      <p>&nbsp;</p>
-	   
-      </td>
-    <td width="196" valign="top">&nbsp;</td>
-  </tr>
-  <tr> 
-    <td colspan="3">&nbsp;</td>
-  </tr>
-</table>
+<?php include 'assets/html/navbar.php';?>
+
+
+<?php
+/******************** ERROR MESSAGES*************************************************
+This code is to show error messages 
+**************************************************************************/
+if(!empty($err))  {
+	echo "error";
+ echo "<div class=\"msg\">";
+foreach ($err as $e) {
+  echo "$e <br>";
+  }
+echo "</div>";	
+ }
+/******************************* END ********************************/	  
+?>
+<div class="container login-box">
+    <div class="row">
+        <div class="col-sm-6 col-md-4 col-md-offset-4">
+            <h1 class="text-center login-title">登录并查询上网信息</h1>
+            <div class="account-wall">
+                <img class="profile-img" src="assets/image/photo.png"
+                    alt="">
+                <form class="form-signin" action="login.php" method="post" name="logForm">
+	                <input type="text" name="usr_email" class="form-control" placeholder="学号或邮箱" required autofocus>
+	                <input type="password" name="pwd" class="form-control" placeholder="密码" required>
+	                <button class="btn btn-lg btn-primary btn-block"  name="doLogin" value="Login" type="submit">
+	                    登录</button>
+	                <label class="checkbox pull-left">
+	                    <input type="checkbox" value="1" name="remember">
+	                    记住我
+	                </label>
+	                <a href="forgot.php" class="pull-right need-help">忘记密码 </a><span class="clearfix"></span>
+                </form>
+            </div>
+            <a href="register.php" class="text-center new-account">注册账号 </a>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
