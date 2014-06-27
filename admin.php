@@ -7,7 +7,7 @@ header("Location: login.php");
 exit();
 }
 
-$page_limit = 10; 
+$page_limit = 3; 
 
 
 $host  = $_SERVER['HTTP_HOST'];

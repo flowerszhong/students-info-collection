@@ -15,8 +15,10 @@ define ("DB_PASS","mzhong1986"); // set database password
 define ("DB_NAME","schooldb9x15.db"); // set database name
 declare(encoding='UTF-8');
 
-if(!file_exists(DB_NAME))
-{
+
+$filename = $_SERVER['DOCUMENT_ROOT']."/students-info-collection/".DB_NAME;
+if(!file_exists($filename))
+{	
 	$db = new PDO('sqlite:'.DB_NAME); 
 	if($db)
 	{	
@@ -77,7 +79,7 @@ if(!file_exists(DB_NAME))
 		die("Couldn't select database");
 	}
 }else{
-	$db = new PDO('sqlite:'.DB_NAME); 
+	$db = new PDO('sqlite:'.$filename); 
 }
 
 

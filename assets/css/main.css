@@ -1,3 +1,115 @@
-select.form-control{
-	max-width: 400px!important;
+/* reset css */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style-type: disc;
+	margin-left: 20px;
+}
+li{
+	display: list-item;
+	text-align: -webkit-match-parent;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+a{
+	text-decoration: none;
+}
+
+
+
+body{
+	margin: 0;
+	padding:50px 5px 0 5px;
+	font-size: 14px;
+	font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* top nav bar */
+
+.navbar{
+	color: #fff;
+	height: 51px;
+	line-height: 20px;
+	margin-bottom: 20px;
+	min-height: 50px;
+
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	z-index: 1030;
+	
+	background-color: #222;
+	border-width: 0 0 1px;
+	border-color: #080808;
+
+	z-index: 1030;
+	-webkit-transform: translate3d(0,0,0);
+	-o-transform: translate3d(0,0,0);
+	transform: translate3d(0,0,0);
+}
+
+.navbar-brand {
+	float: left;
+	height: 50px;
+	padding: 15px 15px;
+	font-size: 18px;
+	line-height: 20px;
+	color: #fff;
+	font-family:  "Microsoft YaHei",微软雅黑,"Microsoft JhengHei",华文细黑,STHeiti,MingLiu;
+}
+
+
+.title{
+	margin:5px 0 5px 0;
+	border-bottom: 1px solid #eee;
+	padding-bottom: 10px;
+	font-size: 24px;
+	font-family:  "Microsoft YaHei",微软雅黑,"Microsoft JhengHei",华文细黑,STHeiti,MingLiu;
+}
+
+.guides{
+	padding-bottom: 10px;
+}
+
+li{
+	height:24px;
+	line-height: 24px;
 }

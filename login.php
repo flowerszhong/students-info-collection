@@ -1,6 +1,14 @@
 <?php 
 include 'dbc.php';
 
+
+$sql_select = "SELECT * FROM payments";
+
+$rrows = $db->query($sql_select) or die(showDBError());
+
+$rows = $rrows->fetchAll();
+
+var_dump($rows);
 $err = array();
 
 foreach($_GET as $key => $value) {
@@ -100,16 +108,12 @@ $row = $result->fetch();
 					 
 
 ?>
-
-<!DOCTYPE html>
-<html>
 <?php 
 $page_title = "登录 - 上网自助服务";
-include 'assets/html/head.php';
+include 'includes/head.php';
+include 'includes/navbar.php'
 ?>
 
-<body>
-<?php include 'assets/html/navbar.php';?>
 
 <?php
 /******************** ERROR MESSAGES*************************************************
