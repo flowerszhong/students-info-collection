@@ -56,23 +56,10 @@ $msg[] = "Profile Sucessfully saved";
  
 $rs_settings = $db->query("select * from students where student_id='$_SESSION[user_id]'"); 
 ?>
+
+<!DOCTYPE html>
 <html>
-<!-- <head>
-<title>My Account Settings</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<script language="JavaScript" type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="js/jquery.validate.js"></script>
-  <script>
-  $(document).ready(function(){
-    $("#myform").validate();
-	 $("#pform").validate();
-  });
-  </script>
-<link href="styles.css" rel="stylesheet" type="text/css">
-</head> -->
-
 <?php include 'assets/html/head.php';?>
-
 
 <body>
 
@@ -81,23 +68,7 @@ $rs_settings = $db->query("select * from students where student_id='$_SESSION[us
 
 <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-        <?php if (isset($_SESSION['user_id'])) {?>
-          <ul class="nav nav-sidebar">
-            <li><a href="myaccount.php">我的账号</a></li>
-            <li class="active"><a href="mysettings.php">个人设置</a></li>
-            <?php if($_SESSION['user_level'] === 2){?>
-            <li><a href="#">代收网费</a></li>
-            <?php } ?>
-
-            <?php if($_SESSION['user_level'] === 5){?>
-            <li><a href="admin.php">设置学生权限</a></li>
-            <?php } ?>
-
-            <li><a href="logout.php">退出登录</a></li>
-          </ul>
-        <?php } ?>
-        </div>
+        <?php include 'assets/html/sidebar.php';?>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
           <h2 class="sub-header">人个档案</h2>
@@ -116,7 +87,7 @@ $rs_settings = $db->query("select * from students where student_id='$_SESSION[us
            }
           ?>
       </p>
-      <p>你可以修改个人信息（姓名邮箱除外）。</p>
+      <p>你可以修改部分个人信息。</p>
     <?php while ($row_settings = $rs_settings->fetch()) {?>
                 <form action="mysettings.php" method="post" name="myform" id="myform">
                   <table  class="table table-striped">
@@ -125,18 +96,96 @@ $rs_settings = $db->query("select * from students where student_id='$_SESSION[us
                       <td><input name="student_id" type="text" id="student_id" class="required" value="<? echo $row_settings['student_id']; ?>" disabled></td>
                     </tr>
 
+                   
                     <tr> 
-                      <td>Phone</td>
+                      <td>姓名</td>
+                      <td><input name="user_name" type="text" value="<? echo $row_settings['user_name']; ?>" disabled></td>
+                    </tr>
+
+                    <tr> 
+                      <td>邮箱</td>
+                      <td><input name="user_email" type="text" value="<? echo $row_settings['user_email']; ?>" disabled></td>
+                    </tr>
+
+
+                    <tr> 
+                      <td>性别</td>
+                      <td><input name="user_email" type="text" value="<? echo $row_settings['user_email']; ?>" disabled></td>
+                    </tr>
+
+                    <tr> 
+                      <td>电话</td>
                       <td><input name="tel" type="text" id="tel" class="required" value="<? echo $row_settings['tel']; ?>"></td>
                     </tr>
+
                     <tr> 
-                      <td>User Name</td>
-                      <td><input name="user_name" type="text" id="web2" value="<? echo $row_settings['user_name']; ?>" disabled></td>
+                      <td>宿舍</td>
+                      <td><input name="tel" type="text" class="required" value="<? echo $row_settings['building']; ?>"></td>
                     </tr>
+
                     <tr> 
-                      <td>Email</td>
-                      <td><input name="user_email" type="text" id="web3"  value="<? echo $row_settings['user_email']; ?>" disabled></td>
+                      <td>上网账号</td>
+                      <td><input name="user_email" type="text" value="<? echo $row_settings['user_email']; ?>" disabled></td>
                     </tr>
+
+                    <tr> 
+                      <td>上网密码</td>
+                      <td>
+                        <input name="tel" type="text" id="tel" class="required" value="<? echo $row_settings['tel']; ?>">
+                        <button class="btn">查看上网密码</button>
+                      </td>
+                    </tr>
+
+                    <tr> 
+                      <td>网费到期时间</td>
+                      <td>
+                        <input name="tel" type="text" class="required" value="<? echo $row_settings['building']; ?>">
+                        <button class='btn'>续交网费</button>
+                      </td>
+                    </tr>
+
+
+                    <tr> 
+                      <td>年级</td>
+                      <td><input name="tel" type="text" class="required" value="<? echo $row_settings['building']; ?>"></td>
+                    </tr>
+
+                    <tr> 
+                      <td>系别</td>
+                      <td><input name="user_email" type="text" value="<? echo $row_settings['user_email']; ?>" disabled></td>
+                    </tr>
+
+                    <tr> 
+                      <td>专业</td>
+                      <td>
+                        <input name="tel" type="text" id="tel" class="required" value="<? echo $row_settings['tel']; ?>">
+                        <button class="btn">查看上网密码</button>
+                      </td>
+                    </tr>
+
+                    <tr> 
+                      <td>班集</td>
+                      <td>
+                        <input name="tel" type="text" class="required" value="<? echo $row_settings['building']; ?>">
+                        <button class='btn'>续交网费</button>
+                      </td>
+                    </tr>
+
+
+                    <tr> 
+                      <td>用户权限</td>
+                      <td>
+                        <input name="user_level" type="text" class="required" value="<? echo $row_settings['user_level']; ?>">
+                      </td>
+                    </tr>
+                   
+                    <tr> 
+                      <td>用户权限</td>
+                      <td>
+                        <input name="user_level" type="text" class="required" value="<? echo $_SESSION['user_level']; ?>">
+                      </td>
+                    </tr>
+                   
                     <tr>
                       <td colspan="2">
                         <input name="doSave" type="submit" id="doSave" value="保存">
@@ -150,11 +199,16 @@ $rs_settings = $db->query("select * from students where student_id='$_SESSION[us
                 <form name="pform" id="pform" method="post" action="">
                   <table class="table table-striped">
                     <tr> 
-                      <td>Old Password</td>
+                      <td>旧密码</td>
                       <td><input name="pwd_old" type="password" class="required password"  id="pwd_old"></td>
                     </tr>
                     <tr> 
-                      <td>New Password</td>
+                      <td>输入新密码</td>
+                      <td><input name="pwd_new" type="password" id="pwd_new" class="required password"  ></td>
+                    </tr>
+
+                    <tr> 
+                      <td>再次输入新密码</td>
                       <td><input name="pwd_new" type="password" id="pwd_new" class="required password"  ></td>
                     </tr>
                     <tr>
@@ -169,5 +223,9 @@ $rs_settings = $db->query("select * from students where student_id='$_SESSION[us
         </div>
       </div>
     </div>
+
+
+    <script src="assets/js/settings.js"></script>
+
 </body>
 </html>

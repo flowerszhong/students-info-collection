@@ -65,8 +65,8 @@ $row = $result->fetch();
 	   // this sets variables in the session 
 		$_SESSION['user_id']= $id;  
 		$_SESSION['user_name'] = $full_name;
-		// $_SESSION['user_level'] = $user_level;
-		$_SESSION['user_level'] = ADMIN_LEVEL;
+		$_SESSION['user_level'] = $user_level;
+		// $_SESSION['user_level'] = ADMIN_LEVEL;
 		$_SESSION['HTTP_USER_AGENT'] = md5($_SERVER['HTTP_USER_AGENT']);
 		// var_dump($_SESSION);
 
@@ -100,26 +100,16 @@ $row = $result->fetch();
 					 
 
 ?>
+
+<!DOCTYPE html>
 <html>
-<!-- <head>
-<title>Members Login</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<script language="JavaScript" type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="js/jquery.validate.js"></script>
-  <script>
-  $(document).ready(function(){
-    $("#logForm").validate();
-  });
-  </script>
-<link href="styles.css" rel="stylesheet" type="text/css">
-
-</head> -->
-
-<?php include 'assets/html/head.php';?>
+<?php 
+$page_title = "登录 - 上网自助服务";
+include 'assets/html/head.php';
+?>
 
 <body>
 <?php include 'assets/html/navbar.php';?>
-
 
 <?php
 /******************** ERROR MESSAGES*************************************************

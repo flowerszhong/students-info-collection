@@ -29,7 +29,7 @@ if($post['doBan'] == 'Ban') {
 if(!empty($_POST['u'])) {
 	foreach ($_POST['u'] as $uid) {
 		$id = filter($uid);
-		$db->exec("update students set banned='1' where student_id='$id' and `user_name` <> 'admin'") or die(print_r($db->errorInfo()));
+		mysql_query("update users set banned='1' where id='$id' and `user_name` <> 'admin'");
 	}
  }
  $ret = $_SERVER['PHP_SELF'] . '?'.$_POST['query_str'];;
@@ -43,7 +43,7 @@ if($_POST['doUnban'] == 'Unban') {
 if(!empty($_POST['u'])) {
 	foreach ($_POST['u'] as $uid) {
 		$id = filter($uid);
-		$db->exec("update students set banned='0' where student_id='$id'") or die(print_r($db->errorInfo()));
+		mysql_query("update users set banned='0' where id='$id'");
 	}
  }
  $ret = $_SERVER['PHP_SELF'] . '?'.$_POST['query_str'];;
@@ -57,7 +57,7 @@ if($_POST['doDelete'] == 'Delete') {
 if(!empty($_POST['u'])) {
 	foreach ($_POST['u'] as $uid) {
 		$id = filter($uid);
-		$db->exec("delete from students where student_id='$id' and `user_name` <> 'admin'") or die(print_r($db->errorInfo()));
+		mysql_query("delete from users where id='$id' and `user_name` <> 'admin'");
 	}
  }
  $ret = $_SERVER['PHP_SELF'] . '?'.$_POST['query_str'];;
@@ -71,7 +71,7 @@ if($_POST['doApprove'] == 'Approve') {
 if(!empty($_POST['u'])) {
 	foreach ($_POST['u'] as $uid) {
 		$id = filter($uid);
-		$db->exec("update students set approved='1' where student_id='$id'") or die(print_r($db->errorInfo()));
+		mysql_query("update users set approved='1' where id='$id'");
 		
 	list($to_email) = mysql_fetch_row(mysql_query("select user_email from users where id='$uid'"));	
  
@@ -103,98 +103,53 @@ THIS IS AN AUTOMATED RESPONSE.
  exit();
 }
 
-$rs_all = $db->query("select count(*) as total_all from students") or die(print_r($db->errorInfo()));
-$rs_active = $db->query("select count(*) as total_active from students where approved='1'") or die(print_r($db->errorInfo()));
-$rs_total_pending = $db->query("select count(*) as total_pending from students where approved='0'");						   
+$rs_all = mysql_query("select count(*) as total_all from users") or die(mysql_error());
+$rs_active = mysql_query("select count(*) as total_active from users where approved='1'") or die(mysql_error());
+$rs_total_pending = mysql_query("select count(*) as tot from users where approved='0'");						   
 
-// list($total_pending) = mysql_fetch_row($rs_total_pending);
-// list($all) = mysql_fetch_row($rs_all);
-// list($active) = mysql_fetch_row($rs_active);
+list($total_pending) = mysql_fetch_row($rs_total_pending);
+list($all) = mysql_fetch_row($rs_all);
+list($active) = mysql_fetch_row($rs_active);
 
-
-$total_pending = $rs_total_pending->fetch();
-$all = $rs_all->fetch();
-$active = $rs_active->fetch();
 
 ?>
-<!DOCTYPE html>
 <html>
-<?php 
-  $page_title = "管理学生信息";
-  include 'assets/html/head.php'; 
-?>
+<head>
+<title>Administration Main Page</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="styles.css" rel="stylesheet" type="text/css">
+<script language="JavaScript" type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
+
+</head>
 
 <body>
-<?php 
-  include 'assets/html/navbar.php'; 
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td width="14%" valign="top"><?php
+	if (isset($_SESSION['user_id'])) {?>
+<div class="myaccount">
+  <p><strong>My Account</strong></p>
+  <a href="myaccount.php">My Account</a><br>
+  <a href="mysettings.php">Settings</a><br>
+    <a href="logout.php">Logout </a>
+	
+  <p>You can add more links here for users</p></div>
+<?php }
+if (checkAdmin()) {
+/*******************************END**************************/
 ?>
-
-<div class="container-fluid">
-<div class="row">
-
-<?php  
-include 'assets/html/sidebar.php'; 
-?>
-
-
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-
-<h3 class="sub-header">统计面板</h3>
-<table class="myaccount table table-striped">
-  <tr>
-    <td width="20%">账号总数:</td>
-    <td><?php echo $all['total_all'];?></td>
-  </tr>
-  <tr>
-    <td>已缴费账号</td>
-    <td><?php echo $active['total_active']; ?></td>
-  </tr>
-  <tr>
-    <td>过期未缴费账号</td>
-    <td><?php echo $total_pending['total_pending']; ?></td>
-  </tr>
-
-  <tr>
-    <td>近期将过期账号</td>
-    <td><?php echo $total_pending['total_pending']; ?></td>
-  </tr>
-  <tr>
-    <td>已验证账号</td>
-    <td><?php echo $active['total_active']; ?></td>
-  </tr>
-
-  <tr>
-    <td>未验证账号</td>
-    <td><?php echo $active['total_active']; ?></td>
-  </tr>
-</table>
-
-
-<h3 class="sub-header">账号搜索</h3>
-<form name="form1" method="get" action="admin.php">
-  <p>
-    <input name="q" type="text" id="q" size="40">(可输入'学号','邮箱','上网账号')
-  </p>
-  <ul>
-    <li>
-      <input type="radio" name="qoption" value="pending" checked>所有账号</li>
-    <li>
-      <input type="radio" name="qoption" value="pending">待缴费用户</li>
-    <li>
-      <input type="radio" name="qoption" value="recent">可用账号</li>
-    <li>
-      <input type="radio" name="qoption" value="banned">过期账号</li>
-  </ul>
-
-  <p>
-    <input name="doSearch" type="submit" id="doSearch2" value="Search"></p>
-</form>
-
-<table>
-  <tr>
+      <p> <a href="admin.php">Admin CP </a></p>
+	  <?php } ?>
+	</td>
     <td width="74%" valign="top" style="padding: 10px;"><h2><font color="#FF0000">Administration 
         Page</font></h2>
-      
+      <table width="100%" border="0" cellpadding="5" cellspacing="0" class="myaccount">
+        <tr>
+          <td>Total users: <?php echo $all;?></td>
+          <td>Active users: <?php echo $active; ?></td>
+          <td>Pending users: <?php echo $total_pending; ?></td>
+        </tr>
+      </table>
       <p><?php 
 	  if(!empty($msg)) {
 	  echo $msg[0];
@@ -202,11 +157,28 @@ include 'assets/html/sidebar.php';
 	  ?></p>
       <table width="80%" border="0" align="center" cellpadding="10" cellspacing="0" style="background-color: #E4F8FA;padding: 2px 5px;border: 1px solid #CAE4FF;" >
         <tr>
-          <td></td>
+          <td><form name="form1" method="get" action="admin.php">
+              <p align="center">Search 
+                <input name="q" type="text" id="q" size="40">
+                <br>
+                [Type email or user name] </p>
+              <p align="center"> 
+                <input type="radio" name="qoption" value="pending">
+                Pending users 
+                <input type="radio" name="qoption" value="recent">
+                Recently registered 
+                <input type="radio" name="qoption" value="banned">
+                Banned users <br>
+                <br>
+                [You can leave search blank to if you use above options]</p>
+              <p align="center"> 
+                <input name="doSearch" type="submit" id="doSearch2" value="Search">
+              </p>
+              </form></td>
         </tr>
       </table>
       <p>
-  <?php if ($get['doSearch'] == 'Search') {
+        <?php if ($get['doSearch'] == 'Search') {
 	  $cond = '';
 	  if($get['qoption'] == 'pending') {
 	  $cond = "where `approved`='0' order by date desc";
@@ -219,25 +191,21 @@ include 'assets/html/sidebar.php';
 	  }
 	  
 	  if($get['q'] == '') { 
-	     $sql = "select * from students $cond"; 
+	  $sql = "select * from users $cond"; 
 	  } 
 	  else { 
-	     $sql = "select * from students 
-                where `user_email` = '$_REQUEST[q]' 
-                or `user_name`='$_REQUEST[q]' 
-                or `net_id`= '$_REQUEST[q]' ";
+	  $sql = "select * from users where `user_email` = '$_REQUEST[q]' or `user_name`='$_REQUEST[q]' ";
 	  }
 
 	  
-	  $rs_total = $db->query($sql) or die(showDBError());
-	  $total = sizeof($rs_total->fetchAll());
-
+	  $rs_total = mysql_query($sql) or die(mysql_error());
+	  $total = mysql_num_rows($rs_total);
+	  
 	  if (!isset($_GET['page']) )
 		{ $start=0; } else
 		{ $start = ($_GET['page'] - 1) * $page_limit; }
 	  
-	  $rs_results = $db->query($sql . " limit $start,$page_limit") or die(showDBError());
-    $rs_results_rows = $rs_results->fetchAll();
+	  $rs_results = mysql_query($sql . " limit $start,$page_limit") or die(mysql_error());
 	  $total_pages = ceil($total/$page_limit);
 	  
 	  ?>
@@ -285,11 +253,9 @@ include 'assets/html/sidebar.php';
             <td>&nbsp;</td>
             <td>&nbsp;</td>
           </tr>
-
-          <?php foreach ($rs_results_rows as $rrows) {?>
-           
+          <?php while ($rrows = mysql_fetch_array($rs_results)) {?>
           <tr> 
-            <td><input name="u[]" type="checkbox" value="<?php echo $rrows['student_id']; ?>" id="u[]"></td>
+            <td><input name="u[]" type="checkbox" value="<?php echo $rrows['id']; ?>" id="u[]"></td>
             <td><?php echo $rrows['date']; ?></td>
             <td> <div align="center"><?php echo $rrows['user_name'];?></div></td>
             <td><?php echo $rrows['user_email']; ?></td>
@@ -344,8 +310,8 @@ include 'assets/html/sidebar.php';
 	  <?php
 	  if($_POST['doSubmit'] == 'Create')
 {
-$rs_dup = $db->query("select count(*) as total from students where user_name='$post[user_name]' OR user_email='$post[user_email]'") or die(print_r($db->errorInfo()));
-$dups = $rs_dup->fetch();
+$rs_dup = mysql_query("select count(*) as total from users where user_name='$post[user_name]' OR user_email='$post[user_email]'") or die(mysql_error());
+list($dups) = mysql_fetch_row($rs_dup);
 
 if($dups > 0) {
 	die("The user name or email already exists in the system");
@@ -362,9 +328,9 @@ if(!empty($_POST['pwd'])) {
   
  }
  
-$db->exec("INSERT INTO students (`user_name`,`user_email`,`pwd`,`approved`,`date`,`user_level`)
+mysql_query("INSERT INTO users (`user_name`,`user_email`,`pwd`,`approved`,`date`,`user_level`)
 			 VALUES ('$post[user_name]','$post[user_email]','$hash','1',now(),'$post[user_level]')
-			 ") or die(print_r($db->errorInfo())); 
+			 ") or die(mysql_error()); 
 
 
 
@@ -432,9 +398,5 @@ echo "<div class=\"msg\">User created with password $pwd....done.</div>";
     <td width="12%">&nbsp;</td>
   </tr>
 </table>
-
-</div>
-</div>
-</div>
 </body>
 </html>

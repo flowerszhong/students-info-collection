@@ -4,26 +4,10 @@ include 'register-util.php';
 ?>
 <!DOCTYPE html>
 <html>
-<head>
-<title>填写注册信息</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<script language="JavaScript" type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="js/jquery.validate.js"></script>
-
-<script>
-$(document).ready(function(){
-    $.validator.addMethod("username", function(value, element) {
-        return this.optional(element) || /^[a-z0-9\_]+$/i.test(value);
-    }, "Username must contain only letters, numbers, or underscore.");
-
-    $("#regForm").validate();
-});
-</script>
-
-            <link href="styles.css" rel="stylesheet" type="text/css"></head>
-
+<?php $page_title = "注册账号" ?>
+<?php include 'assets/html/head.php';?>
 <body>
-
+<?php include 'assets/html/navbar.php';?>
 <?php   
 if(!empty($err))  {
     echo "<div class=\"msg\">";
@@ -33,21 +17,8 @@ if(!empty($err))  {
     echo "</div>"; 
 }
 ?> 
- <table width="100%" border="0" cellspacing="0" cellpadding="5" class="main">
-                <tr>
-                    <td colspan="3">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td width="160" valign="top">
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                        <p>&nbsp;</p>
-                    </td>
-                    <td width="732" valign="top">
         <form action="register.php" method="post" name="regForm" id="regForm" accept-charset="UTF-8" >
-            <table width="95%" border="0" cellpadding="3" cellspacing="3" class="forms">
+            <table class="table table-striped">
                 <tr>
                     <td>
                         姓名
@@ -127,7 +98,8 @@ if(!empty($err))  {
                     <td>年级</td>
                     <td>
                         <select name="grade">
-                            <option value="2012">2012</option>
+                            <option value="2012">2011</option>
+                            <option value="2012" selected>2012</option>
                             <option value="2013">2013</option>
                             <option value="2014">2014</option>
                         </select>
@@ -137,7 +109,7 @@ if(!empty($err))  {
                 <tr>
                     <td>系别</td>
                     <td>
-                        <select name="department">
+                        <select name="department" id="department"  class="form-control">
                             <option value="op1">op1</option>
                             <option value="op2">op2</option>
                             <option value="op3">op3</option>
@@ -148,32 +120,35 @@ if(!empty($err))  {
                 <tr>
                     <td>专业</td>
                     <td>
-                        <select name="major">
-                            <option value="major1">major1</option>
-                            <option value="major2">major2</option>
-                            <option value="major3">major3</option>
+                        <select name="major" id="major" class="form-control">
+                            <option value="">请选择专业</option>
                         </select>
                     </td>
                 </tr>
                 <tr>
                     <td>班集</td>
                     <td>
-                        <select name="major">
-                            <option value="class1">class1</option>
-                            <option value="class2">class2</option>
-                            <option value="class3">class3</option>
+                        <select name="class"  class="form-control">
+                            <option value="1">1班</option>
+                            <option value="2">2班</option>
+                            <option value="3">3班</option>
+                            <option value="4">4班</option>
                         </select>
                     </td>
                 </tr>
 
-        </table>
-        <p align="center">
-            <input name="doRegister" type="submit" id="doRegister" value="Register"></p>
-    </form>
-</td>
-<td width="196" valign="top">&nbsp;</td>
-</tr>
+                <tr>
+                    <td colspan="2">
+                        <button name="doRegister" type="submit" id="doRegister" value="Register">
+                            注册
+                        </button>
+                    </td>
+                </tr>
 
-</table>
+        </table>
+    </form>
+
+    <script src="assets/js/register.js"></script>
+
 </body>
 </html>

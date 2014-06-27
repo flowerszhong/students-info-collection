@@ -1,18 +1,4 @@
 <?php
-/*************** PHP LOGIN SCRIPT V 2.3*********************
-(c) Balakrishnan 2010. All Rights Reserved
-
-Usage: This script can be used FREE of charge for any commercial or personal projects. Enjoy!
-
-Limitations:
-- This script cannot be sold.
-- This script should have copyright notice intact. Dont remove it please...
-- This script may not be provided for download except from its original site.
-
-For further usage, please contact me.
-
-/******************** MAIN SETTINGS - PHP LOGIN SCRIPT V2.1 **********************
-Please complete wherever marked xxxxxxxxx
 
 /************* MYSQL DATABASE SETTINGS *****************
 1. Specify Database name in $dbname
@@ -26,7 +12,7 @@ Note: If you use cpanel, the name will be like account_database
 define ("DB_HOST", "localhost"); // set database host
 define ("DB_USER", "root"); // set database user
 define ("DB_PASS","mzhong1986"); // set database password
-define ("DB_NAME","schooldb9x10.db"); // set database name
+define ("DB_NAME","schooldb9x15.db"); // set database name
 declare(encoding='UTF-8');
 
 if(!file_exists(DB_NAME))
@@ -48,9 +34,12 @@ if(!file_exists(DB_NAME))
 			  `building` text,
 
 			  `department` varchar(200) NOT NULL default '',
+			  `department_id` INTEGER NOT NULL default '',
 			  `major` varchar(200) NOT NULL default '',
-			  `grade` varchar(200) NOT NULL default '',
+			  `major_id` INTEGER NOT NULL default '',
+			  `grade` INTEGER NOT NULL default 2014,
 			  `class` varchar(200) NOT NULL default '',
+			  `class_id` INTEGER NOT NULL default '',
 			  
 			  `reg_date` text NOT NULL default '0000-00-00',
 			  `users_ip` varchar(200) NOT NULL default '', 
@@ -67,9 +56,23 @@ if(!file_exists(DB_NAME))
 			  `last_pay_date` text,
 			  `expire_date` text,
 			  `recharging` int(1) default '1',
-			  `recharged` int(1) default '0'
+			  `recharged` int(1) default '0',
+			  `fee` INTEGER default '0'
 			)";
 	    $db->exec($sql);
+
+
+	    $sql_payments = "
+	    	CREATE TABLE `payments` (
+	    		`pay_id` INTEGER NOT NULL PRIMARY KEY,
+			  `student_id` INTEGER NOT NULL,
+			  `pay_date` text,
+			  `pay_amount` text,
+			  `pay_month` INTEGER,
+			  `pay_ok` int(1) default '0'
+			)";
+		$db->exec($sql_payments);
+
 	}else{
 		die("Couldn't select database");
 	}
@@ -174,14 +177,14 @@ if (!isset($_SESSION['user_id']) && !isset($_SESSION['user_name']) )
 
 function filter($data) {
 	// $data = trim(htmlentities(strip_tags($data)));//fuck htmlentities,not for chinese
-	$data = trim(strip_tags($data));
+	$data = trim(htmlspecialchars(strip_tags($data)));
 
 
 	
 	if (get_magic_quotes_gpc())
 		$data = stripslashes($data);
 	
-	$data = mysql_real_escape_string($data);
+	$data = sqlite_escape_string($data);
 	
 
 	return $data;
@@ -318,8 +321,8 @@ function logout()
 	session_start();
 	// var_dump($db);
 
-	$sess_user_id = strip_tags(mysql_real_escape_string($_SESSION['user_id']));
-	$cook_user_id = strip_tags(mysql_real_escape_string($_COOKIE['user_id']));
+	$sess_user_id = strip_tags(sqlite_escape_string($_SESSION['user_id']));
+	$cook_user_id = strip_tags(sqlite_escape_string($_COOKIE['user_id']));
 
 	if(isset($sess_user_id) || isset($cook_user_id)) {
 		// echo $sess_user_id;
@@ -386,6 +389,14 @@ function strToUtf8 ($vector)
     }
     return $vector;
 }
+
+
+function showDBError ()
+{
+	global $db;
+	print_r($db->errorInfo());
+}
+
 
 
 ?>
