@@ -13,7 +13,7 @@ include 'includes/head.php';
 <ul>
 	<li>
 		已激活的账号请直接
-		<a href="login">登录</a>
+		<a href="login.php">登录</a>
 	</li>
 	<li>
 		2014级新生请
@@ -22,7 +22,7 @@ include 'includes/head.php';
 
 	<li>
 		2013级同学可通过'姓名'+'上网账号'(如'王大锤'+'fsVPDNhbxxxxxx')
-		<a href="login.php">登录</a>
+		<a href="login-for-old-account.php">登录</a>
 		，填写相关资料激活账号
 	</li>
 

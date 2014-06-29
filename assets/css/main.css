@@ -53,6 +53,13 @@ a{
 }
 
 
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+
 
 body{
 	margin: 0;
@@ -105,6 +112,12 @@ body{
 	font-family:  "Microsoft YaHei",微软雅黑,"Microsoft JhengHei",华文细黑,STHeiti,MingLiu;
 }
 
+.sub-title{
+	margin:5px 0 5px 0;
+	padding-bottom: 10px;
+	font-size: 18px;
+}
+
 .guides{
 	padding-bottom: 10px;
 }
@@ -112,4 +125,137 @@ body{
 li{
 	height:24px;
 	line-height: 24px;
+}
+
+
+
+
+/* login */
+
+.login-box{
+	margin:0 auto;
+	max-width: 350px;
+	text-align: center;
+	padding-top: 20px;
+}
+
+.form-signin {
+	max-width: 330px;
+	padding: 15px;
+	margin: 0 auto;
+	text-align: left;
+}
+
+.form-signin .form-signin-heading, .form-signin .checkbox {
+	margin-bottom: 10px;
+}
+
+
+.form-control {
+	display: block;
+	padding: 6px 12px;
+	width:100%;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #FFF;
+	background-image: none;
+	border: 1px solid #CCC;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.form-signin .form-control{
+	+width:290px;
+}
+
+.account-wall {
+	margin-top: 20px;
+	padding: 40px 0px 20px 0px;
+	background-color: #F7F7F7;
+	-moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+	-webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+
+.field-tip{
+	color: #000;
+	font-size: 11px;
+	text-align: left;
+}
+
+.btn-submit{
+	margin-top: 10px;
+}
+
+
+
+/* Sidebar navigation */
+
+
+.sidebar {
+	position: fixed;
+	top: 51px;
+	bottom: 0;
+	left: 0;
+	z-index: 1000;
+	display: block;
+	padding: 20px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	background-color: #F5F5F5;
+	border-right: 1px solid #EEE;
+	width:160px;
+	_width:140px;
+	+width:140px;
+}
+
+.sidebar li{
+	height:40px;
+}
+.nav>li>a {
+position: relative;
+display: block;
+padding: 10px 15px;
+}
+.nav-sidebar {
+  margin-right: -21px; /* 20px padding + 1px border */
+  margin-bottom: 20px;
+  margin-left: -20px;
+}
+.nav-sidebar > li > a {
+  padding-right: 20px;
+  padding-left: 20px;
+  color: #428BCA;
+}
+
+.nav-sidebar > li > a:hover{
+	color:#2A6496;
+}
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+  color: #fff;
+  background-color: #428bca;
+}
+
+
+/* main */
+
+.main{
+	margin-left: 160px;
+	+margin-left: 180px;
+	padding: 5px;
+}
+
+
+/* admin */
+
+.edit-box{
+	display: none;
 }

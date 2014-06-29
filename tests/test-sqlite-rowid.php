@@ -2,11 +2,12 @@
 include '../dbc.php';
 
 
+$sql_insert = "INSERT INTO `payments`(`student_id`,`pay_date`,`pay_amount`,`pay_month`,`id`) VALUES (4444,444,444,444,NULL)";
 
-var_dump($db);
+$db->exec($sql_insert);
 
-$sql_select = "SELECT pay_date FROM payments";
-
+$sql_select = "SELECT last_insert_rowid() as last_insert_cid";
+ 
 $rrows = $db->query($sql_select) or die(showDBError());
 
 $rows = $rrows->fetch();

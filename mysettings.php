@@ -8,224 +8,184 @@ page_protect();
 $err = array();
 $msg = array();
 
-if($_POST['doUpdate'])  
-{
-
-
-$rs_pwd = $db->query("select pwd from students where student_id='$_SESSION[user_id]'");
-$rs_pwd_row = $rs_pwd->fetch();
-$old = $rs_pwd_row['pwd'];
-$old_salt = substr($old,0,9);
-
-//check for old password in md5 format
-	if($old === PwdHash($_POST['pwd_old'],$old_salt))
-	{
-	$newsha1 = PwdHash($_POST['pwd_new']);
-	$db->exec("update students set pwd='$newsha1' where student_id='$_SESSION[user_id]'");
-	$msg[] = "Your new password is updated";
-	//header("Location: mysettings.php?msg=Your new password is updated");
-	} else
-	{
-	 $err[] = "Your old password is invalid";
-	 //header("Location: mysettings.php?msg=Your old password is invalid");
-	}
-
-}
 
 if($_POST['doSave'])  
 {
-// Filter POST data for harmful code (sanitize)
-foreach($_POST as $key => $value) {
-	$data[$key] = filter($value);
-}
+	// Filter POST data for harmful code (sanitize)
+	foreach($_POST as $key =>$value) {
+		$data[$key] = filter($value);
+	}
+
+	// var_dump($_POST);
+
+	if($data['user_name']){
+		$sql_update = "UPDATE students SET `user_name` = '$data[user_name]' WHERE id='$_SESSION[user_id]'";
+		$db->exec($sql_update) or die(showDBError());
+	}
+
+	if($data['student_id']){
+		$sql_update = "UPDATE students SET `student_id` = '$data[student_id]' WHERE id='$_SESSION[user_id]'";
+		$db->exec($sql_update) or die(showDBError());
+	}
 
 
-$db->exec("UPDATE users SET
-			`full_name` = '$data[name]',
-			`address` = '$data[address]',
-			`tel` = '$data[tel]',
-			`fax` = '$data[fax]',
-			`country` = '$data[country]',
-			`website` = '$data[web]'
-			 WHERE id='$_SESSION[user_id]'
-			") or die(print_r($db->errorInfo()));
+	if($data['tel']){
+		$sql_update = "UPDATE students SET `tel` = '$data[tel]' WHERE id='$_SESSION[user_id]'";
+		$db->exec($sql_update) or die(showDBError());
+	}
 
-//header("Location: mysettings.php?msg=Profile Sucessfully saved");
-$msg[] = "Profile Sucessfully saved";
- }
+	if($data['user_email']){
+		$sql_update = "UPDATE students SET `user_email` = '$data[user_email]' WHERE id='$_SESSION[user_id]'";
+		$db->exec($sql_update) or die(showDBError());
+	}
+
+	if($data['grade']){
+		$sql_update = "UPDATE students SET `grade` = '$data[grade]' WHERE id='$_SESSION[user_id]'";
+		$db->exec($sql_update) or die(showDBError());
+	}
+
+	if($data['department']){
+		$sql_update = "UPDATE students SET `department` = '$data[department]' WHERE id='$_SESSION[user_id]'";
+		$db->exec($sql_update) or die(showDBError());
+	}
+
+	if($data['major']){
+		$sql_update = "UPDATE students SET `major` = '$data[major]' WHERE id='$_SESSION[user_id]'";
+		$db->exec($sql_update) or die(showDBError());
+	}
+
+
+	if($data['class']){
+		$sql_update = "UPDATE students SET `class` = '$data[class]' WHERE id='$_SESSION[user_id]'";
+		$db->exec($sql_update) or die(showDBError());
+	}
+
+	
+
+
+	// $db->exec("UPDATE students SET
+	// 			`user_name` = '$data[user_name]',
+	// 			`student_id` = '$data[student_id]',
+	// 			`tel` = '$data[tel]',
+	// 			`user_email` = '$data[user_email]',
+	// 			`grade` = '$data[grade]',
+	// 			`department` = '$data[department]',
+	// 			`major` = '$data[major]',
+	// 			`class` = '$data[class]'
+	// 			 WHERE id='$_SESSION[user_id]'
+	// 			") or die(print_r($db->errorInfo()));
+
+	//header("Location: mysettings.php?msg=Profile Sucessfully saved");
+	$msg[] = "人个资料更新成功";
+	 }
  
-$rs_settings = $db->query("select * from students where student_id='$_SESSION[user_id]'"); 
-?>
+$rs_settings = $db->query("select * from students where id='$_SESSION[user_id]'"); 
+include 'includes/head.php';
+include 'includes/sidebar.php';
+include 'includes/errors.php';
+ ?>
+<div class="main">
 
-<!DOCTYPE html>
-<html>
-<?php include 'assets/html/head.php';?>
+	<h3 class="title">人个档案</h3>
 
-<body>
+	<p>你可以修改部分个人信息。</p>
+	<?php while ($row_settings = $rs_settings->
+	fetch()) {?>
+	<form action="mysettings.php" method="post" name="myform" id="myform">
+		<table  class="table table-striped">
+			<tr>
+				<td>学号</td>
+				<td>
+					<input name="student_id" type="text" id="student_id" class="required" value="<? echo $row_settings['student_id']; ?>" 
 
-<?php include 'assets/html/navbar.php';?>
+					<?php if(!empty($row_settings['student_id'])){
+						echo "disabled";
+						} ?>
+					></td>
+			</tr>
 
+			<tr>
+				<td>姓名</td>
+				<td>
+					<input name="user_name" type="text" value="<? echo $row_settings['user_name']; ?>" 
+					<?php if(!empty($row_settings['user_name'])){
+						echo "disabled";
+						} ?>
 
-<div class="container-fluid">
-      <div class="row">
-        <?php include 'assets/html/sidebar.php';?>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+					></td>
+			</tr>
 
-          <h2 class="sub-header">人个档案</h2>
-          <div class="table-responsive">
-          <?php 
-        if(!empty($err))  {
-           echo "<div class=\"msg\">";
-          foreach ($err as $e) {
-            echo "* Error - $e <br>";
-            }
-          echo "</div>";  
-           }
-           if(!empty($msg))  {
-            echo "<div class=\"msg\">" . $msg[0] . "</div>";
+			<tr>
+				<td>邮箱</td>
+				<td>
+					<input name="user_email" type="text" value="<? echo $row_settings['user_email']; ?>" 
 
-           }
-          ?>
-      </p>
-      <p>你可以修改部分个人信息。</p>
-    <?php while ($row_settings = $rs_settings->fetch()) {?>
-                <form action="mysettings.php" method="post" name="myform" id="myform">
-                  <table  class="table table-striped">
-                    <tr> 
-                      <td>学号</td>
-                      <td><input name="student_id" type="text" id="student_id" class="required" value="<? echo $row_settings['student_id']; ?>" disabled></td>
-                    </tr>
+					<?php if(!empty($row_settings['user_email'])){
+											echo "disabled";
+											} ?>
 
-                   
-                    <tr> 
-                      <td>姓名</td>
-                      <td><input name="user_name" type="text" value="<? echo $row_settings['user_name']; ?>" disabled></td>
-                    </tr>
+					></td>
+			</tr>
 
-                    <tr> 
-                      <td>邮箱</td>
-                      <td><input name="user_email" type="text" value="<? echo $row_settings['user_email']; ?>" disabled></td>
-                    </tr>
+			<tr>
+				<td>电话</td>
+				<td>
+					<input name="tel" type="text" id="tel" class="required" value="<? echo $row_settings['tel']; ?>"></td>
+			</tr>
 
+			<tr>
+				<td>年级</td>
+				<td>
+					<input name="grade" type="text" class="required" value="<? echo $row_settings['grade']; ?>">
+				</td>
+			</tr>
 
-                    <tr> 
-                      <td>性别</td>
-                      <td><input name="user_email" type="text" value="<? echo $row_settings['user_email']; ?>" disabled></td>
-                    </tr>
+			<tr>
+				<td>系别</td>
+				<td>
+					
+					<select name="department" id="department">
+					<?php if($row_settings['department']) {?>
+						<option value="<?php $row_settings['department']; ?>"><?php $row_settings['department']; ?></option>
+						<?php } ?>
+					</select>
 
-                    <tr> 
-                      <td>电话</td>
-                      <td><input name="tel" type="text" id="tel" class="required" value="<? echo $row_settings['tel']; ?>"></td>
-                    </tr>
+					</td>
+			</tr>
 
-                    <tr> 
-                      <td>宿舍</td>
-                      <td><input name="tel" type="text" class="required" value="<? echo $row_settings['building']; ?>"></td>
-                    </tr>
+			<tr>
+				<td>专业</td>
+				<td>
+					<select name="major" id="major">
+						<option value="<?php echo $row_settings['major']; ?>"><?php echo $row_settings['major'];  ?></option>
+						option
+					</select>
+				</td>
+			</tr>
 
-                    <tr> 
-                      <td>上网账号</td>
-                      <td><input name="user_email" type="text" value="<? echo $row_settings['user_email']; ?>" disabled></td>
-                    </tr>
+			<tr>
+				<td>班级</td>
+				<td>
+					<select name="grade" id="" cvalue="<?php echo $row_settings['class']; ?>" >
+						<option value="1">1班</option>
+						<option value="2">2班</option>
+						<option value="3">3班</option>
+						<option value="4">4班</option>
+						<option value="5">5班</option>
+						<option value="6">6班</option>
+						<option value="7">7班</option>
+						<option value="8">8班</option>
+					</select>
+				</td>
+			</tr>
 
-                    <tr> 
-                      <td>上网密码</td>
-                      <td>
-                        <input name="tel" type="text" id="tel" class="required" value="<? echo $row_settings['tel']; ?>">
-                        <button class="btn">查看上网密码</button>
-                      </td>
-                    </tr>
+			<tr>
+				<td colspan="2">
+					<input name="doSave" type="submit" id="doSave" value="保存"></td>
+			</tr>
+		</table>
+	</form>
+	<?php } ?></div>
 
-                    <tr> 
-                      <td>网费到期时间</td>
-                      <td>
-                        <input name="tel" type="text" class="required" value="<? echo $row_settings['building']; ?>">
-                        <button class='btn'>续交网费</button>
-                      </td>
-                    </tr>
-
-
-                    <tr> 
-                      <td>年级</td>
-                      <td><input name="tel" type="text" class="required" value="<? echo $row_settings['building']; ?>"></td>
-                    </tr>
-
-                    <tr> 
-                      <td>系别</td>
-                      <td><input name="user_email" type="text" value="<? echo $row_settings['user_email']; ?>" disabled></td>
-                    </tr>
-
-                    <tr> 
-                      <td>专业</td>
-                      <td>
-                        <input name="tel" type="text" id="tel" class="required" value="<? echo $row_settings['tel']; ?>">
-                        <button class="btn">查看上网密码</button>
-                      </td>
-                    </tr>
-
-                    <tr> 
-                      <td>班集</td>
-                      <td>
-                        <input name="tel" type="text" class="required" value="<? echo $row_settings['building']; ?>">
-                        <button class='btn'>续交网费</button>
-                      </td>
-                    </tr>
-
-
-                    <tr> 
-                      <td>用户权限</td>
-                      <td>
-                        <input name="user_level" type="text" class="required" value="<? echo $row_settings['user_level']; ?>">
-                      </td>
-                    </tr>
-                   
-                    <tr> 
-                      <td>用户权限</td>
-                      <td>
-                        <input name="user_level" type="text" class="required" value="<? echo $_SESSION['user_level']; ?>">
-                      </td>
-                    </tr>
-                   
-                    <tr>
-                      <td colspan="2">
-                        <input name="doSave" type="submit" id="doSave" value="保存">
-                      </td>
-                    </tr>
-                  </table>
-                </form>
-              <?php } ?>
-                <h2 class="titlehdr">修改密码</h2>
-                <div class="table-responsive">
-                <form name="pform" id="pform" method="post" action="">
-                  <table class="table table-striped">
-                    <tr> 
-                      <td>旧密码</td>
-                      <td><input name="pwd_old" type="password" class="required password"  id="pwd_old"></td>
-                    </tr>
-                    <tr> 
-                      <td>输入新密码</td>
-                      <td><input name="pwd_new" type="password" id="pwd_new" class="required password"  ></td>
-                    </tr>
-
-                    <tr> 
-                      <td>再次输入新密码</td>
-                      <td><input name="pwd_new" type="password" id="pwd_new" class="required password"  ></td>
-                    </tr>
-                    <tr>
-                      <td colspan="2">
-                        <input name="doUpdate" type="submit" id="doUpdate" value="更新">
-                      </td>
-                    </tr>
-                  </table>
-                </form>
-              </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-    <script src="assets/js/settings.js"></script>
-
-</body>
-</html>
+<script src="assets/js/settings.js"></script>
+<script src="assets/js/register.js"></script>

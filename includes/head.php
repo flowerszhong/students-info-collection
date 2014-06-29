@@ -13,6 +13,7 @@
             } ?></title>
 
     <link href="assets/css/main.css" rel="stylesheet">
+    <link href="assets/css/btn.css" rel="stylesheet">
     <script src="assets/lib/jquery-1.11.1.js"></script>
 
 </head>
@@ -22,7 +23,7 @@
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="#">广东环境保护工程职业学院-学生上网自助服务</a>
+                <a class="navbar-brand" href="index.php">广东环境保护工程职业学院-学生上网自助服务</a>
             </div>
         </div>
     </div>

@@ -12,7 +12,7 @@ Note: If you use cpanel, the name will be like account_database
 define ("DB_HOST", "localhost"); // set database host
 define ("DB_USER", "root"); // set database user
 define ("DB_PASS","mzhong1986"); // set database password
-define ("DB_NAME","schooldb9x15.db"); // set database name
+define ("DB_NAME","schooldb9x22.php"); // set database name
 declare(encoding='UTF-8');
 
 
@@ -24,28 +24,29 @@ if(!file_exists($filename))
 	{	
 		$sql = "
 			CREATE TABLE `students` (
-			  `student_id` INTEGER NOT NULL PRIMARY KEY,
-			  `md5_id` varchar(200)  NOT NULL default '',
+			  `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			  `student_id` INTEGER,
+			  `md5_id` varchar(200) default '',
 			  `user_name` varchar(200) NOT NULL default '',
-			  `user_email` varchar(220) NOT NULL default '',
+			  `user_email` varchar(220) default '',
 			  `user_level` INTEGER(4) default '1',
-			  `pwd` varchar(220) NOT NULL default '',
+			  `pwd` varchar(220) default '',
 			  
 			  `gender` int(1) default '0',
 			  `tel` varchar(200) default '',
 			  `building` text,
 
-			  `department` varchar(200) NOT NULL default '',
-			  `department_id` INTEGER NOT NULL default '',
-			  `major` varchar(200) NOT NULL default '',
-			  `major_id` INTEGER NOT NULL default '',
-			  `grade` INTEGER NOT NULL default 2014,
-			  `class` varchar(200) NOT NULL default '',
-			  `class_id` INTEGER NOT NULL default '',
+			  `department` varchar(200) default '',
+			  `department_id` INTEGER default '',
+			  `major` varchar(200) default '',
+			  `major_id` INTEGER default '',
+			  `grade` INTEGER default 2014,
+			  `class` varchar(200) default '',
+			  `class_id` INTEGER default '',
 			  
-			  `reg_date` text NOT NULL default '0000-00-00',
-			  `users_ip` varchar(200) NOT NULL default '', 
-			  `approved` int(1) NOT NULL default '0',
+			  `reg_date` text default '0000-00-00',
+			  `users_ip` varchar(200) default '', 
+			  `approved` int(1) default '0',
 			  `activation_code` int(10) NOT NULL default '0',
 
 			  `banned` int(1) default '0',
@@ -59,7 +60,9 @@ if(!file_exists($filename))
 			  `expire_date` text,
 			  `recharging` int(1) default '1',
 			  `recharged` int(1) default '0',
-			  `fee` INTEGER default '0'
+			  `fee` INTEGER default '0',
+			  `consumer_record`	BLOB,
+			  `recharge_fee` INTEGER
 			)";
 	    $db->exec($sql);
 
@@ -74,6 +77,48 @@ if(!file_exists($filename))
 			  `pay_ok` int(1) default '0'
 			)";
 		$db->exec($sql_payments);
+
+
+		$sql_departments = "CREATE TABLE `departments` (
+			`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			`name`	TEXT NOT NULL,
+			`code`	TEXT NOT NULL
+		)";
+
+		$db->exec($sql_departments);
+
+
+		$sql_departments_data = "INSERT INTO `departments`(`name`,`code`) SELECT '环境工程与土木工程系','gcx' UNION ALL 
+									SELECT '环境科学系','hkx' UNION ALL
+									SELECT '环境监测系','jcx' UNION ALL
+									SELECT '机电工程系','jdgc' UNION ALL
+									SELECT '生态环境系','sthj' UNION ALL
+									SELECT '环境艺术与服务系','hjys' UNION ALL
+									SELECT '循环经济与低碳经济系','xxjj' UNION ALL";
+
+		$db->exec($sql_departments_data);
+
+
+		$sql_majors = "CREATE TABLE `majors` (
+			`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			`department_id`	INTEGER NOT NULL,
+			`name`	TEXT,
+			`code`	TEXT
+		)";
+		$db->exec($sql_majors);
+
+
+		$sql_accounts = "CREATE TABLE `accounts` (
+			`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			`account_id`	TEXT,
+			`account_pwd`	TEXT,
+			`user_id`	INTEGER,
+			`used`	INTEGER,
+			`account_type`	INTEGER
+		)";
+
+		$db->exec($sql_accounts);
+
 
 	}else{
 		die("Couldn't select database");
@@ -356,7 +401,7 @@ function logout()
 	setcookie("user_name", '', time()-60*60*24*COOKIE_TIME_OUT, "/");
 	setcookie("user_key", '', time()-60*60*24*COOKIE_TIME_OUT, "/");
 
-	header("Location: login.php");
+	header("Location: index.php");
 }
 
 // Password and salt generation
@@ -397,6 +442,40 @@ function showDBError ()
 {
 	global $db;
 	print_r($db->errorInfo());
+}
+
+function getLastInsertID()
+{
+	global $db;
+	$sql_select = "SELECT last_insert_rowid() as last_insert_cid";
+	 
+	$rrows = $db->query($sql_select) or die(showDBError());
+
+	$rows = $rrows->fetch();
+
+	if($rows['last_insert_cid']!== false){
+		return $rows['last_insert_cid'];
+	}else{
+		return false;
+	}
+}
+
+function getUserName()
+{
+	global $db;
+	$id = $_SESSION['user_id'];
+	$sql_select = "SELECT user_name as user_name from students where id=$id";
+	$rrows = $db->query($sql_select) or die(showDBError());
+	$rows = $rrows->fetch();
+
+	if($row['user_name']!==''){
+		$_SESSION['user_name'] = $row['user_name'];
+		return $rows['user_name'];
+	}else{
+		return $_SESSION['user_name'];
+
+	}
+
 }
 
 
