@@ -24,7 +24,7 @@ if($_POST['recharge'])
 
 
 	$db->exec("UPDATE students SET
-				`FIELD33` = '$recharge_fee'
+				`recharge_fee` = '$recharge_fee'
 				 WHERE id='$_SESSION[user_id]'
 				") or die(print_r($db->errorInfo()));
 

@@ -17,6 +17,7 @@
             <li><a href="create.php">创建账号</a></li>
             <li><a href="config.php">配置系统</a></li>
             <li><a href="export.php">数据导出</a></li>
+            <li><a href="net-accounts.php">上网账号表</a></li>
             <?php } ?>
 
             <li><a href="logout.php">退出登录</a></li>

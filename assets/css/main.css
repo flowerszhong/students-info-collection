@@ -259,3 +259,44 @@ padding: 10px 15px;
 .edit-box{
 	display: none;
 }
+
+
+
+
+/*message*/
+.msg{
+	width:100%;
+	position: absolute;
+	top:0;
+	text-align: center;
+	color: #fff;
+}
+
+.ok-msg{
+	width:40%;
+	margin: 0 auto;
+	padding: 10px;
+	background: green;
+}
+
+.error-msg{
+	width:40%;
+	margin: 0 auto;
+	padding: 10px;
+	background: red;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
