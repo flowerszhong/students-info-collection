@@ -92,7 +92,6 @@ include 'includes/errors.php';
             <a href="register.php" class="text-center new-account">注册账号 </a>
 </div>
 
-
 <?php 
 include 'includes/footer.php'
  ?>

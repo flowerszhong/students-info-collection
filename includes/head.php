@@ -2,7 +2,6 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="广东环境保护工程职业学院-上网自助服务">
     <meta name="author" content="flowerszhong@gmail.com">
 
@@ -12,8 +11,10 @@
             echo "自助上网服务-广东环境保护工程职业学院";
             } ?></title>
 
-    <link href="assets/css/main.css" rel="stylesheet">
-    <link href="assets/css/btn.css" rel="stylesheet">
+    <link href="assets/css/main.css" rel="stylesheet" type='text/css' media='all' />
+    <link href="assets/css/btn.css" rel="stylesheet" type='text/css' media='all' />
+    <link href="assets/css/table.css" rel="stylesheet" type='text/css' media='all' />
+
     <script src="assets/lib/jquery-1.11.1.js"></script>
 
 </head>

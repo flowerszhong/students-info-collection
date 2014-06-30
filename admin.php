@@ -25,33 +25,6 @@ foreach($_POST as $key => $value) {
 	$post[$key] = filter($value);
 }
 
-if($post['doBan'] == 'Ban') {
-
-if(!empty($_POST['u'])) {
-	foreach ($_POST['u'] as $uid) {
-		$id = filter($uid);
-		$db->exec("update students set banned='1' where student_id='$id' and `user_name` <> 'admin'") or die(showDBError());
-	}
- }
- $ret = $_SERVER['PHP_SELF'] . '?'.$_POST['query_str'];;
- 
- header("Location: $ret");
- exit();
-}
-
-if($_POST['doUnban'] == 'Unban') {
-
-if(!empty($_POST['u'])) {
-	foreach ($_POST['u'] as $uid) {
-		$id = filter($uid);
-		$db->exec("update students set banned='0' where student_id='$id'") or die(showDBError());
-	}
- }
- $ret = $_SERVER['PHP_SELF'] . '?'.$_POST['query_str'];;
- 
- header("Location: $ret");
- exit();
-}
 
 if($_POST['doDelete'] == 'Delete') {
 
@@ -116,7 +89,7 @@ THIS IS AN AUTOMATED RESPONSE.
 
 <div class="main">
 
-<h3 class="sub-header">账号搜索</h3>
+<h3 class="title">账号搜索</h3>
 <form name="form1" method="get" action="admin.php">
   <p>
     <input name="q" type="text" id="q" size="40">(可输入'学号','邮箱','上网账号')
@@ -144,9 +117,6 @@ THIS IS AN AUTOMATED RESPONSE.
 	  }
 	  if($get['qoption'] == 'recent') {
 	  $cond = "order by id desc";
-	  }
-	  if($get['qoption'] == 'banned') {
-	  $cond = "where `banned`='1' order by id";
 	  }
 	  
 	  if($get['q'] == '') { 

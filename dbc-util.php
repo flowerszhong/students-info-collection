@@ -6,8 +6,6 @@
 </head>
 <body>
 
-
-
 <?php 
 include 'dbc.php';
 include 'char.php';

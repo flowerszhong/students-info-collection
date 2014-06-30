@@ -26,6 +26,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+	color:#000;
 }
 ol, ul {
 	list-style-type: disc;
@@ -66,6 +67,7 @@ body{
 	padding:50px 5px 0 5px;
 	font-size: 14px;
 	font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+	min-height: 900px;
 }
 
 /* top nav bar */
@@ -81,13 +83,11 @@ body{
 	top: 0px;
 	left: 0px;
 	right: 0px;
-	z-index: 1030;
 	
 	background-color: #222;
 	border-width: 0 0 1px;
 	border-color: #080808;
 
-	z-index: 1030;
 	-webkit-transform: translate3d(0,0,0);
 	-o-transform: translate3d(0,0,0);
 	transform: translate3d(0,0,0);
