@@ -1,11 +1,10 @@
 <?php 
 include 'dbc.php';
+session_start($_COOKIE['PHPSESSID']);
 
 $err = array();
 
-
 if(isset($_SESSION['user_id'])){
-	echo "sessionid";
 	header("Location: myaccount.php");
 	die();
 }

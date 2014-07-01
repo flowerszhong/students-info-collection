@@ -5,6 +5,25 @@ page_protect();
 $page_title = "数据导出";
 include 'includes/head.php';
 include 'includes/sidebar.php';
+
+if ($_POST['add'])
+{
+
+	foreach($_POST as $key => $value) {
+		$data[$key] = filter($value); // post variables are filtered
+	}
+
+	if($data['account_id'] && $data['account_pwd']){
+		$sql_insert = "insert into `accounts` ('account_id','account_pwd','used') VALUES ('$data[account_id]','$data[account_pwd]','0')";
+		$db->exec($sql_insert) or die(showDBError());
+	}
+
+
+}
+
+
+
+
  ?>
 
 <div class="main">
@@ -16,10 +35,9 @@ include 'includes/sidebar.php';
 	</tr>		
 	<?php 
 
-		$sql_select = "select * from `accounts` where used='0' limit 20";
+		$sql_select = "select * from `accounts` ORDER BY id DESC limit 20";
 		$rows_result = $db->query($sql_select) or die(shodDBError());
 		$rows = $rows_result->fetchAll(); 
-		var_dump($rows);
 	?>
 
 		<?php foreach ($rows as $rrow) {?>
@@ -44,6 +62,32 @@ include 'includes/sidebar.php';
 	</table>
 
 
+	<h3 class="title">添加账号</h3>
+	<div>
+		<form action="net-accounts.php" method="post">
+		<table>
+		<tr>
+			<td>账号</td>
+			<td>
+				<input type="text" name="account_id" value=""/>
+
+			</td>
+		</tr>
+		<tr>
+			<td>密码</td>
+			<td>
+				<input type="text" name="account_pwd" value=""/>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<input type="submit" value="提交" name="add"/>
+			</td>
+		</tr>
+		</table>
+
+		</form>
+	</div>
 
 </div>
 
