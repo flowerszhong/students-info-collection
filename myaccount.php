@@ -169,9 +169,50 @@ $rs_total_pending = $db->query("select count(*) as total_pending from students w
 	</table>
 
 
-	<?php }?>
+	<?php }else{?>
+
+	<div class="account-guiding">
+
+		亲爱的同学，<br>
+		如果你已经填写了相关的邮箱信息，请注意查收你的邮件，通过邮件激活你的账号。
+		<br/>
+		如果你未填写邮箱信息，请在<a href="mysettings.php">个人设置</a>里填写邮箱，系统会向你发送激活邮件。
+		<br>
+
+		由于我校的网络开通及收费以班集体为单位。所以请务必在<a href="mysettings.php">个人设置</a>填写正确你的系别、专业、专业方向以及班集。
+		感谢你的配合。
+
+	</div>
 
 
+
+	
+
+
+
+	<?php } ?>
+
+
+	<?php 
+
+		if(!checkAdmin()){
+
+			$sql_select = "select * from students where id = $_SESSION[user_id]";
+			$select_result = $db->query($sql_select) or die(showDBError());
+
+			$row = $select_result->fetch();
+
+			if(!$row['approved']){
+				echo "<p>你的账号尚未通过验证，请填写邮箱或查收邮件，激活账号</p>";
+			}
+
+			if($row['user_email'] && $row['student_id'] && $row['grade'] && $row['department'] && $row['major'] && $row['sub_major'] ){
+
+			}else{
+				echo "<p>你的信息尚不全，请<a href='mysettings.php'>设置人个信息</a></p>";
+			} 
+		}
+	?>
 
 
 

@@ -197,6 +197,7 @@ THIS IS AN AUTOMATED RESPONSE.
 
     <script src="assets/js/settings.js"></script>
     <script src="assets/js/admin.js"></script>
+    <script src="assets/js/register.js"></script>
 
    
 

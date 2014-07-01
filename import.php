@@ -2,7 +2,7 @@
 include 'dbc.php';
 page_protect();
 
-$page_title = "数据导出";
+$page_title = "上网账号导入";
 include 'includes/head.php';
 include 'includes/sidebar.php';
  ?>

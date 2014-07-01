@@ -146,6 +146,8 @@ li{
 	text-align: left;
 }
 
+
+
 .form-signin .form-signin-heading, .form-signin .checkbox {
 	margin-bottom: 10px;
 }
@@ -154,7 +156,6 @@ li{
 .form-control {
 	display: block;
 	padding: 6px 12px;
-	width:100%;
 	font-size: 14px;
 	line-height: 1.42857143;
 	color: #555;
@@ -167,6 +168,10 @@ li{
 	-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
 	-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.login-box .form-control{
+	width:100%;
 }
 
 .form-signin .form-control{
@@ -286,6 +291,17 @@ padding: 10px 15px;
 	background: red;
 }
 
+
+
+/*settings*/
+
+.editing{
+	display: none;
+}
+
+#cancel-setting-btn{
+	display: none;
+}
 
 
 

@@ -77,12 +77,6 @@ include 'includes/errors.php';
             </tr>
 
             <tr>
-                <td>netId</td>
-                <td>
-                    <input type="text" name="net_id"></td>
-            </tr>
-
-            <tr>
                 <td>年级</td>
                 <td>
                     <select name="grade">
@@ -111,8 +105,17 @@ include 'includes/errors.php';
                     </select>
                 </td>
             </tr>
+
             <tr>
-                <td>班集</td>
+                <td>专业方向</td>
+                <td>
+                    <select name="sub_major" id="sub-major" class="form-control">
+                        <option value="">请选择专业方向</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>班级</td>
                 <td>
                     <select name="class"  class="form-control">
                         <option value="1">1班</option>
@@ -135,6 +138,7 @@ include 'includes/errors.php';
 </form>
 
 <script src="assets/js/register.js"></script>
+<script src="assets/js/main.js"></script>
 
 </body>
 </html>

@@ -78,7 +78,7 @@ if(empty($err)) {
 
     // echo $sql_insert;
                 
-    $insert_result = $db->exec($sql_insert) or die("insert data failed:" . print_r($db->errorInfo()));
+    $insert_result = $db->exec($sql_insert) or die("insert data failed:" . shoDBError());
 
     $user_id = rand();
     $md5_id = md5($user_id);

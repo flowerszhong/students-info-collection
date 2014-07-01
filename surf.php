@@ -46,14 +46,22 @@ include 'includes/errors.php';
 			<tr>
 				<td>上网账号</td>
 				<td>
+					<?php if($row_settings['net_id']){ ?>
+
 					<input name="student_id" type="text" id="student_id" value="<? echo $row_settings['net_id']; ?>" disabled></td>
+					<?php  } else{?>
+					你尚未分配上网账号
+					<?php } ?>
 			</tr>
 
 			<tr>
 				<td>账号密码</td>
 				<td>
+				<?php if($row_settings['net_id']){ ?>
 					<button class="btn">查看账号密码</button>
 					<label for=""><?php echo $row_settings['net_pwd']; ?></label>
+				<?php } ?>
+					
 				</td>
 			</tr>
 
@@ -117,6 +125,11 @@ include 'includes/errors.php';
 		</table>
 
 	</form>
+
+	<h3 class="title">申请修改上网账号</h3>
+	
+
+
 	</div>
 
 <script src="assets/js/settings.js"></script>

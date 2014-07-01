@@ -1,6 +1,20 @@
 <?php 
 include 'dbc.php';
+page_protect();
+
+$page_title = "系统配置";
 include 'includes/head.php';
 include 'includes/sidebar.php';
-include 'includes/footer.php';
  ?>
+
+<div class="main">
+	
+</div>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/settings.js"></script>
+<script src="assets/js/register.js"></script>
+
+ <?php 
+include 'includes/footer.php';
+  ?>

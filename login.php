@@ -34,8 +34,7 @@ if (strpos($user_email,'@') === false) {
 
 
 $sql_select = "SELECT `id`,`pwd`,`user_name`,`approved`,`user_level` FROM students WHERE 
-           $user_cond
-			AND `banned` = '0'";
+           $user_cond";
 // echo $sql_select;		
 // $result = $db->query($sql_select) or die(print_r($db->errorInfo())); 
 $result = $db->query($sql_select); 
@@ -43,24 +42,21 @@ $result = $db->query($sql_select);
 // var_dump($result);
 
 $row = $result->fetch();
-// var_dump($row);
 
   // Match row found with more than 1 results  - the user is authenticated. 
     if ($row) { 
 	
-
 	$id = $row['id'];
 	$pwd = $row['pwd'];
 	$user_name = $row['user_name'];
 	$approved = $row['approved'];
 	$user_level = $row['user_level'];
 
-	// $full_name = base64_decode($full_name);
 	$approved = true;
 
 	if(!$approved) {
 	//$msg = urlencode("Account not activated. Please check your email for activation code");
-	$err[] = "Account not activated. Please check your email for activation code";
+	$err[] = "账号尚未激活，请检查你的邮件，激活你的账号";
 	
 	//header("Location: login.php?msg=$msg");
 	 //exit();
@@ -87,9 +83,6 @@ $row = $result->fetch();
 		$ckey = GenKey();
 		$db->exec("update students set `ctime`='$stamp', `ckey` = '$ckey' where id='$id'") or die($db->errorInfo());
 
-
-
-
 		//set a cookie 
 		
 	   if(isset($_POST['remember'])){
@@ -105,11 +98,11 @@ $row = $result->fetch();
 		else
 		{
 		//$msg = urlencode("Invalid Login. Please try again with correct user email and password. ");
-		$err[] = "Invalid Login. Please try again with correct user email and password.";
+		$err[] = "登录出错，请填写正确账号及密码";
 		//header("Location: login.php?msg=$msg");
 		}
 	} else {
-		$err[] = "Error - Invalid login. No such user exists";
+		$err[] = "登录出错，该账号不存在";
 	  }		
 }
 ?>
