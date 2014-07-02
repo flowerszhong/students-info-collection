@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title></title>
+</head>
+<body>
+
+</body>
+</html>
+
 <?php 
 include 'dbc.php';
 session_start();
@@ -11,6 +22,97 @@ $ret = $_SERVER['HTTP_REFERER'];
 foreach($_GET as $key => $value) {
 	$get[$key] = filter($value);
 }
+
+
+if($get['cmd'] == 'associate'){
+	$relid = $get['id'];
+	$relids = explode(",", $relid);
+
+	$relids_length = count($relids);
+
+
+	if($relids_length > 1){
+		for ($i=0; $i < $relids_length ; $i++) { 
+			associateNetID($relids[$i]);
+		}
+	}else{
+		associateNetID($relid);
+	}
+
+}
+
+function associateNetID($userid)
+{
+	global $db;
+
+	echo $userid;
+	$sql_select = "select * from accounts order by id desc limit 1";
+	$select_row = $db->query($sql_select);
+	$row = $select_row->fetch();
+
+	if(!$row){
+		return "未关联成功，无可用账号；";
+	}
+
+	// var_dump($row);
+
+	$row_id = $row['id'];
+	echo $row_id;
+	$net_id = $row['account_id'];
+	$net_pwd = $row['account_pwd'];
+
+
+
+	$sql_select1 = "select user_email from students where id=$userid";
+	$select_row1 = $db->query($sql_select1);
+	$row1 = $select_row1->fetch();
+	$user_email = $row1['user_email'];
+
+	// echo $user_email;
+
+
+	$update_students = "update students set net_id=$net_id,net_pwd=$net_pwd where id=$userid";
+	$db->exec($update_students);
+
+	$subject = "你的上网账号已关联";
+	$message = getAssociateMessage($net_id,$net_pwd);
+	$smtpDone = sendEmail($subject,$message,$user_email);
+	// echo $message;
+
+	// echo $smtpDone;
+
+	if($smtpDone){
+		echo "update accounts";
+		echo $userid;
+		$update_account = "update accounts set used ='1',user_id='$userid' where id='$row_id'";
+
+		echo $update_account;
+		$db->exec($update_account) or die(showDBError());
+	}
+
+}
+
+function getAssociateMessage($net_id,$net_pwd)
+{
+
+	$message = "<p>hi $user_name,你的上网账号已经被分配</p>
+    <ul>
+        <li>账号: $net_id </li>
+        <li>密码: $net_pwd</li>
+    </ul>
+
+    <p>Thank You</p>
+
+    <p>______________________________________________________</p>
+    该邮件为系统自动发现，请不要回复。<br/>
+    THIS IS AN AUTOMATED RESPONSE. <br/>
+    ***DO NOT RESPOND TO THIS EMAIL****<br/>
+    ";
+
+    return $message;
+}
+
+
 
 if($get['cmd'] == 'approve')
 {

@@ -95,9 +95,11 @@ THIS IS AN AUTOMATED RESPONSE.
          </select>页
 
 
+          <input name="checkall" type="submit" id="checkall" value="全选">
+          <input name="uncheckall" type="submit" id="uncheckall" value="全不选">
           <input name="doApprove" type="submit" id="doApprove" value="激活">
           <input name="doDelete" type="submit" id="doDelete" value="删除">
-          <input name="doAllocation" type="submit" id="doAllocation" value="分发上网账号">
+          <input name="doAllocation" type="submit" id="doAllocation" value="关联上网账号">
       </div>
         <table>
         <thead>
@@ -111,7 +113,8 @@ THIS IS AN AUTOMATED RESPONSE.
             <td>专业</td>
             <td>专业方向</td>
             <td>班级</td>
-            <td>是否激活</td>
+            <td>是否关联<br>
+            上网账号</td>
             <td>操作</td>
           </tr>
           <tr> 

@@ -35,8 +35,8 @@ var $studentsList = $("#students-list"),
   			'user_email' : $email.val(),
   			'grade' : $grade.val(),
   			'department': $department.val(),
-  			// 'major' : $major.val(),
-  			'major' : '物理污染监测技术',
+  			'major' : $major.val(),
+  			// 'major' : '物理污染监测技术',
   			'sub_major' : $subMajor.val(),
   			'class' : $classes.val()
 
@@ -88,8 +88,99 @@ var $studentsList = $("#students-list"),
 
 
 
-  $("#row-limit,#grade").change(loadData)
+  $("#row-limit,#grade").change(loadData);
+
+
+  $studentsList.on('click','.associate-btn',function () {
+    var relid = $(this).attr('relid');
+    var $this = $(this);
+    $.get("do.php",{
+      cmd:"associate",
+      id : relid
+    },function (data) {
+      console.log(data);
+    })
+  });
+
+
+  $("#doAllocation").click(function () {
+    var ids = getCheckAllRowsId();
+    console.log(ids);
+
+    if(ids.length){
+      $.get("do.php",{
+        cmd:"associate",
+        id : ids
+      },function () {
+        // $this.text("ok");
+      })
+    }
+
+  });
+
+  function getCheckAllRowsId () {
+    var $checkedRecords = $studentsList.find(".record-check:checked");
+    var ids = [];
+    for (var i = 0; i < $checkedRecords.length; i++) {
+      ids.push($checkedRecords[i].value);
+    };
+
+    return ids.join(',');
+  }
+
+
+  $("#checkall").on('click',function () {
+    $studentsList.find(".record-check").prop("checked",true);
+  });
+
+  $("#uncheckall").on('click',function () {
+    $studentsList.find(".record-check").prop("checked",false);
+  });
+
+
+
+
+
+
+
 
 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -88,7 +88,7 @@ if(empty($err)) {
     if($user_registration)  {
         $a_link = "
             <h3>激活你的账号</h3>
-            http://$host$path/activate.php?user=$md5_id&activ_code=$activ_code
+            <a href='http://$host$path/activate.php?user=$md5_id&activ_code=$activ_code'>http://$host$path/activate.php?user=$md5_id&activ_code=$activ_code</a>
             "; 
     } else {
         $a_link = "你的账号正在等待管理员激活";
@@ -106,7 +106,6 @@ if(empty($err)) {
 
     <p>Thank You</p>
 
-    <p>Administrator</p>
     <p>______________________________________________________</p>
     该邮件为系统自动发现，请不要回复。<br/>
     THIS IS AN AUTOMATED RESPONSE. <br/>
@@ -119,7 +118,7 @@ if(empty($err)) {
     $smtpserver = "smtp.163.com";//SMTP服务器 
     $smtpserverport = 25;//SMTP服务器端口 
     $smtpusermail = "srxhzyh@163.com";//SMTP服务器的用户邮箱 
-    // $smtpemailto = $user_email;//发送给谁 
+    $smtpemailto = $usr_email;//发送给谁 
     $smtpuser = "srxhzyh";//SMTP服务器的用户帐号 
     $smtppass = "3961908";//SMTP服务器的用户密码 
     $mailsubject = "请激活您的账号";//邮件主题 
@@ -129,7 +128,7 @@ if(empty($err)) {
 
     $smtp = new smtp($smtpserver,$smtpserverport,true,$smtpuser,$smtppass);//这里面的一个true是表示使用身份验证,否则不使用身份验证. 
     $smtp->debug = false;//是否显示发送的调试信息 
-    $smtpOK = $smtp->sendmail($user_email, $smtpusermail, $mailsubject, $mailbody, $mailtype); 
+    $smtpOK = $smtp->sendmail($smtpemailto, $smtpusermail, $mailsubject, $mailbody, $mailtype); 
 
     header("Location: thankyou.php");  
     exit();

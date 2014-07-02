@@ -206,7 +206,7 @@ $rs_total_pending = $db->query("select count(*) as total_pending from students w
 				echo "<p>你的账号尚未通过验证，请填写邮箱或查收邮件，激活账号</p>";
 			}
 
-			if($row['user_email'] && $row['student_id'] && $row['grade'] && $row['department'] && $row['major'] && $row['sub_major'] ){
+			if($row['user_email'] && $row['student_id'] && $row['grade'] && $row['department'] && $row['major']){
 
 			}else{
 				echo "<p>你的信息尚不全，请<a href='mysettings.php'>设置人个信息</a></p>";

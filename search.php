@@ -43,7 +43,7 @@ if((int)($get['record_limit'])>$record_limit){
 if ($get['doSearch'] == 'Search') {
 	  $cond = 'where id > 0 ';
 	  if($get['qoption'] == 'pending') {
-	  $cond = "where `approved`='0' order by id";
+	  $cond = "where `approved`='0' order by id desc";
 	  }
 	  if($get['qoption'] == 'recent') {
 	  $cond = "order by id desc";
@@ -59,7 +59,7 @@ if ($get['doSearch'] == 'Search') {
 	  }
 	  
 	  if($get['q'] == '') { 
-	     $sql = "select * from students $cond"; 
+	     $sql = "select * from students $cond order by id desc"; 
 	  } 
 	  else { 
 	     $sql = "select * from students 
@@ -92,22 +92,23 @@ if ($get['doSearch'] == 'Search') {
 
           <?php foreach ($rs_results_rows as $rrows) {?>
           <tr> 
-            <td><input name="id" type="checkbox" value="<?php echo $rrows['id']; ?>" id=""></td>
+            <td><input name="id" type="checkbox" value="<?php echo $rrows['id']; ?>" class="record-check"></td>
             <td><?php echo $rrows['student_id'];?></td>
             <td><?php echo $rrows['user_name'];?></td>
             <td><?php echo $rrows['user_email']; ?></td>
             <td><?php echo $rrows['grade']; ?></td>
-            <td><?php echo $rrows['deparment']; ?></td>
+            <td><?php echo $rrows['department']; ?></td>
             <td><?php echo $rrows['major']; ?></td>
             <td><?php echo $rrows['sub_major']; ?></td>
             <td><?php echo $rrows['class']; ?></td>
 
             <td> <span id="approve<?php echo $rrows['id']; ?>"> 
-              <?php if(!$rrows['approved']) { echo '未激活'; } else {echo "已激活"; }?>
+              <?php if(!$rrows['net_id']) { echo '未关联'; } else {echo "已关联"; }?>
               </span> 
             </td>
             <td>
-              <a href="javascript:void(0);" onclick='$.get("do.php",{ cmd: "approve", id: "<?php echo $rrows['id']; ?>" } ,function(data){ $("#approve<?php echo $rrows['id']; ?>").html(data); });'>激活</a> 
+              <a relid="<?php echo $rrows['id']; ?>" class="associate-btn <?php if($rrows['net_id']){echo 'hide';} ?>">关联</a> 
+              <a relid="<?php echo $rrows['id']; ?>" class="dissociate-btn <?php if(!$rrows['net_id']){echo 'hide';} ?>">停止关联</a> 
               <a class="show-edit-box">编辑</a> 
             </td>
           </tr>
