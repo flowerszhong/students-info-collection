@@ -27,10 +27,6 @@ foreach($_POST as $key => $value) {
 	$post[$key] = filter($value);
 }
 
-var_dump($_GET);
-
-
-
 $page_limit = 10; 
 $record_limit = 10;
 
@@ -54,6 +50,10 @@ if ($get['doSearch'] == 'Search') {
 	  	$cond = $cond . 'and grade = '.$grade .' ';
 	  }
 
+    if($get['department']){
+      $cond = $cond . 'and department = "'.$get['department'] .'" ';
+    }
+
 	  if($get['major']){
 	  	$cond = $cond . 'and major = "' .$get['major'].'" ';
 	  }
@@ -68,7 +68,7 @@ if ($get['doSearch'] == 'Search') {
                 or `net_id`= '$_REQUEST[q]' ";
 	  }
 
-	  echo $sql;
+	  // echo $sql;
 
 	  
 	  

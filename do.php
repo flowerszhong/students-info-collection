@@ -30,14 +30,62 @@ if($get['cmd'] == 'associate'){
 
 	$relids_length = count($relids);
 
+	$db->beginTransaction();
+	$update_ok = associateNetIDs($relids);
+	$db->commit();
 
-	if($relids_length > 1){
-		for ($i=0; $i < $relids_length ; $i++) { 
-			associateNetID($relids[$i]);
-		}
-	}else{
-		associateNetID($relid);
+	echo $update_ok;
+
+
+	// if($relids_length > 1){
+	// 	echo $relids_length;
+	// 	$db->beginTransaction();
+	// 	for ($i=0; $i < $relids_length ; $i++) { 
+	// 		associateNetID($relids[$i]);
+	// 	}
+	// 	$db->commit();
+	// 	associateNetID($relid);
+	// }
+
+}
+
+function associateNetIDs($ids)
+{
+	$ids_length = count($ids);
+	global $db;
+
+	$sql_select = "select * from accounts order by id desc limit $ids_length";
+	$select_rows = $db->query($sql_select);
+	$rows = $select_rows->fetchAll();
+
+	echo $insert_stmt;
+
+
+	$cursor = 0;
+
+	foreach ($rows as $record) {
+		$net_id = $record['account_id'];
+		$net_pwd = $record['account_pwd'];
+		$id = $ids[$cursor];
+		$record_id = $record['id'];
+
+		echo $net_id;
+		echo $net_pwd;
+		echo $id;
+
+		echo "<br>";
+
+		$sql_udpate_students = "update students set net_id='$net_id',net_pwd='$net_pwd' where id=$id";
+		$db->exec($sql_udpate_students) or die(showDBError());
+
+		$sql_udpate_account = "update accounts set used=1 where id=$record_id";
+		$db->exec($sql_udpate_account) or die(showDBError());
+
+		$cursor++;
 	}
+
+	return "ok";
+
 
 }
 
@@ -45,19 +93,20 @@ function associateNetID($userid)
 {
 	global $db;
 
-	echo $userid;
+	// echo $userid;
 	$sql_select = "select * from accounts order by id desc limit 1";
 	$select_row = $db->query($sql_select);
 	$row = $select_row->fetch();
 
 	if(!$row){
+		echo "未关联成功，无可用账号；";
 		return "未关联成功，无可用账号；";
 	}
 
 	// var_dump($row);
 
 	$row_id = $row['id'];
-	echo $row_id;
+	// echo $row_id;
 	$net_id = $row['account_id'];
 	$net_pwd = $row['account_pwd'];
 
@@ -80,15 +129,20 @@ function associateNetID($userid)
 	// echo $message;
 
 	// echo $smtpDone;
+	$update_account = "update accounts set used ='1',user_id='$userid' where id='$row_id'";
+	$db->exec($update_account) or die(showDBError());
 
-	if($smtpDone){
-		echo "update accounts";
-		echo $userid;
-		$update_account = "update accounts set used ='1',user_id='$userid' where id='$row_id'";
+	echo $userid;
 
-		echo $update_account;
-		$db->exec($update_account) or die(showDBError());
-	}
+	// if($smtpDone){
+	// 	echo "update accounts";
+	// 	echo "<br>";
+	// 	echo $userid;
+	// 	$update_account = "update accounts set used ='1',user_id='$userid' where id='$row_id'";
+
+	// 	// echo $update_account;
+	// 	$db->exec($update_account) or die(showDBError());
+	// }
 
 }
 

@@ -15,7 +15,7 @@
     <link href="assets/css/btn.css" rel="stylesheet" type='text/css' media='all' />
     <link href="assets/css/table.css" rel="stylesheet" type='text/css' media='all' />
 
-    <script src="assets/lib/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="assets/lib/jquery-1.11.1.js"></script>
 
 </head>
 

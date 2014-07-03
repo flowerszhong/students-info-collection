@@ -126,7 +126,48 @@ THIS IS AN AUTOMATED RESPONSE.
 
 $rs_all = $db->query("select count(*) as total_all from students") or die(print_r($db->errorInfo()));
 $rs_active = $db->query("select count(*) as total_active from students where approved='1'") or die(print_r($db->errorInfo()));
-$rs_total_pending = $db->query("select count(*) as total_pending from students where approved='0'");						   
+$rs_total_pending = $db->query("select count(*) as total_pending from students where approved='0'");
+
+$rs_available = $db->query("select count(*) as total_availiable from students where net_id<>'' and net_pwd <>'' ") or die(showDBError());
+// $datenow = "2014-11-01";
+// $rs_expire = $db->query("select count(*) as total_expire from students where expire_date >") or die(showDBError());
+// print_r($rs_expire);
+
+
+$sql_all_available = 'select count(*) from students where approved="0" and net_id<>"" and net_pwd<>""';
+
+$sep = $sql_all_available . ' and expire_date >= "20140930"';
+$oct = $sql_all_available . ' and expire_date >= "20141031"';
+$nov = $sql_all_available . ' and expire_date >= "20141130"';
+$dec = $sql_all_available . ' and expire_date >= "20141231"';
+$sep_13 = $sep . ' and (grade=2013 or grade=13)';
+$sep_14 = $sep . ' and (grade=2014 or grade=14)';
+$oct_13 = $oct . ' and (grade=2013 or grade=13)';
+$oct_14 = $oct . ' and (grade=2014 or grade=14)';
+$nov_13 = $nov . ' and (grade=2013 or grade=13)';
+$nov_14 = $nov . ' and (grade=2014 or grade=14)';
+$dec_13 = $dec . ' and (grade=2013 or grade=13)';
+$dec_14 = $dec . ' and (grade=2014 or grade=14)';
+
+$sep_13_rows = $db->query($sep_13) or die(showDBError());
+$sep_14_rows = $db->query($sep_14) or die(showDBError());
+$oct_13_rows = $db->query($oct_13) or die(showDBError());
+$oct_14_rows = $db->query($oct_14) or die(showDBError());
+$nov_13_rows = $db->query($nov_13) or die(showDBError());
+$nov_14_rows = $db->query($nov_14) or die(showDBError());
+$dec_13_rows = $db->query($dec_13) or die(showDBError());
+$dec_14_rows = $db->query($dec_14) or die(showDBError());
+
+
+$sep_13_count = $sep_13_rows->fetch();
+$sep_14_count = $sep_14_rows->fetch();
+$oct_13_count = $oct_13_rows->fetch();
+$oct_14_count = $oct_14_rows->fetch();
+$nov_13_count = $nov_13_rows->fetch();
+$nov_14_count = $nov_14_rows->fetch();
+$dec_13_count = $dec_13_rows->fetch();
+$dec_14_count = $dec_14_rows->fetch();
+
 
 // list($total_pending) = mysql_fetch_row($rs_total_pending);
 // list($all) = mysql_fetch_row($rs_all);
@@ -136,6 +177,8 @@ $rs_total_pending = $db->query("select count(*) as total_pending from students w
 	$total_pending = $rs_total_pending->fetch();
 	$all = $rs_all->fetch();
 	$active = $rs_active->fetch();
+	$available = $rs_available->fetch();
+	// $expire = $rs_expire->fetch();
 	
 ?>
 	<h3 class="sub-title">统计面板</h3>
@@ -166,6 +209,123 @@ $rs_total_pending = $db->query("select count(*) as total_pending from students w
 	    <td>未验证账号</td>
 	    <td><?php echo $active['total_active']; ?></td>
 	  </tr>
+	</table>
+
+
+	<table>
+		<thead>
+			<tr>
+				<td></td>
+
+				<td colspan="2">9月</td>
+				<td colspan="2">10月</td>
+				<td colspan="2">11月</td>
+				<td colspan="2">12月</td>
+				<td>合计</td>
+
+			</tr>
+
+			<tr>
+				<td>月分</td>
+				<td>2013级</td>
+				<td>2014级</td>
+				<td>2013级</td>
+				<td>2014级</td>
+				<td>2013级</td>
+				<td>2014级</td>
+				<td>2013级</td>
+				<td>2014级</td>
+				<td></td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>需缴费用户数</td>
+				<td><?php echo $sep_13_count[0]; ?></td>
+				<td><?php echo $sep_13_count[0]; ?></td>
+				<td><?php echo $oct_13_count[0]; ?></td>
+				<td><?php echo $oct_14_count[0]; ?></td>
+				<td><?php echo $nov_13_count[0]; ?></td>
+				<td><?php echo $nov_14_count[0]; ?></td>
+				<td><?php echo $dec_13_count[0]; ?></td>
+				<td><?php echo $dec_14_count[0]; ?></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>可用账户总数</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<!-- <tr>
+				<td>账号尚未关联用户</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>需缴费用户数</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>过期账号数</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<td>用户总数</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr> -->
+
+			<tr>
+				<td>需支付电信总金额(RMB)</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</tbody>
 	</table>
 
 
