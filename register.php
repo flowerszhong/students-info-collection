@@ -45,6 +45,9 @@ include 'includes/errors.php';
                 </td>
             </tr>
             <tr>
+                <td colspan="2">上网自助服务登录密码设置</td>
+            </tr>
+            <tr>
                 <td>
                     密码
                     <span class="required">
